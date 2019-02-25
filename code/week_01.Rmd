@@ -1,0 +1,94 @@
+---
+title: "week_01"
+author: "Mark Russeff, Renato Albolea, Shuai Ma"
+subtitle: Primary Findings
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+  word_document: default
+---
+&nbsp;
+&nbsp;
+
+__Research Questions:__
+Controlling for relevant characteristics, is race/ethnicity associated with the outcome of a mortgage loan application?
+
+
+```{r setup, echo=TRUE, include=FALSE, message=FALSE, error=FALSE, warning=FALSE}
+# Clear environment
+rm(list = ls(all = TRUE))
+
+# check if package is installed, if not installed then load
+if(!require(here)){
+  install.packages("here")
+}
+library(here)
+
+if(!require(tidyverse)){
+  install.packages("tidyverse")
+}
+library(tidyverse)
+
+if(!require(DataExplorer)){
+  install.packages("DataExplorer")
+}
+library(DataExplorer)
+
+if(!require(lmtest)){
+  install.packages("lmtest")
+}
+library(lmtest)
+
+if(!require(stargazer)){
+  install.packages("stargazer")
+}
+library(stargazer)
+library(kableExtra)
+
+```
+
+```{r import_data}
+#load the persional data to variable Base
+base <- read_csv(here('raw_data','MLD Data File-1.csv'))
+
+base <- base %>% 
+  mutate(MARRIED = as.numeric(MARRIED),
+         MALE = as.numeric(MALE)
+  
+)
+
+plot_missing(base)
+base %>% summary()
+
+base <- base %>% filter(GDLIN<=1 & is.na(MALE)==FALSE)
+
+base %>% filter(BLACK == 1) %>% summary()
+base %>% filter(BLACK == 1) %>% group_by(MALE,GDLIN) %>% summarise(mean(APPROVE),
+                                                                   min(OBRAT),
+                                                                   mean(OBRAT),
+                                                                   max(OBRAT),
+                                                                   min(LOANPRC),
+                                                                   mean(LOANPRC),
+                                                                   max(LOANPRC))
+base %>% filter(HISPAN == 1) %>% summary()
+base %>% filter(HISPAN == 1) %>% group_by(MALE,GDLIN) %>% summarise(mean(APPROVE),
+                                                                   min(OBRAT),
+                                                                   mean(OBRAT),
+                                                                   max(OBRAT),
+                                                                   min(LOANPRC),
+                                                                   mean(LOANPRC),
+                                                                   max(LOANPRC))
+base %>% filter(HISPAN ==0 & BLACK ==0) %>% summary()
+base %>% filter(HISPAN ==0 & BLACK ==0) %>% group_by(MALE,GDLIN) %>% summarise(mean(APPROVE),
+                                                                   min(OBRAT),
+                                                                   mean(OBRAT),
+                                                                   max(OBRAT),
+                                                                   min(LOANPRC),
+                                                                   mean(LOANPRC),
+                                                                   max(LOANPRC))
+base %>% filter(APPROVE == 1) %>% summary()
+
+
+
+```
