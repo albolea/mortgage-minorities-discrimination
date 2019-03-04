@@ -3,9 +3,9 @@ title: "week_01"
 author: "Mark Russeff, Renato Albolea, Shuai Ma"
 subtitle: Primary Findings
 output:
+  pdf_document: default
   html_document:
     df_print: paged
-  pdf_document: default
   word_document: default
 ---
 &nbsp;
@@ -44,51 +44,291 @@ if(!require(stargazer)){
   install.packages("stargazer")
 }
 library(stargazer)
+
+if(!require(gridExtra)){
+  install.packages("gridExtra")
+}
+library(gridExtra)
+
+if(!require(kableExtra)){
+  install.packages("kableExtra")
+}
 library(kableExtra)
+
+if(!require(aod)){
+  install.packages("aod")
+}
+library(aod)
 
 ```
 
+_Background_
+The following abstract appeared in Alicia H. Munnell, Geoffrey M.B. Tootell, Lynn E. Browne, and James McEneaney (1996), “Mortgage Lending in Boston: Interpreting HMDA Data,” American Economic Review 86, 25-53.
+
+>The Home Mortgage Disclosure Act was enacted to monitor minority and low-income access to the mortgage market. The data collected for this purpose show that minorities are more than twice as likely to be denied a mortgage as whites.  Yet variables correlated with both race and creditworthiness were omitted from these data, making any conclusion about race’s role in mortgage lending impossible. The Federal Reserve Board of Boston collected additional variables important to the mortgage lending decision….
+
+As discussed in Munnell et al (1996), the HMDA data indicate whether an applicant’s mortgage application was approved and provide several demographic characteristics.  In 1990, following the request of the Federal Reserve Board of Boston, lending institutions in the Boston area provided additional information relevant to mortgage lending decisions.  In light of the relatively small number of mortgage loan applications made by minorities, these extra variables were collected for all applications by blacks and Hispanics and for a random sample of those by whites.
+
+>All applicants are non-Hispanic white, non Hispanic black, or Hispanic.  [In 1990 about 94% of Boston residents were white, Black, or Hispanic.](http://www.bostonplans.org/getattachment/83972a7a-c454-4aac-b3eb-02e1fddd71e3/)
+
+_Data_
+
+Loading the data and looking the data structure
 ```{r import_data}
 #load the persional data to variable Base
 base <- read_csv(here('raw_data','MLD Data File-1.csv'))
+base %>% str()
+```
 
+We can see that the features Married, Male, and Guide Line have wrong types of data.
+
+```{r wrong_data}
+base %>% group_by(MALE) %>% summarise(n())
+base %>% group_by(MARRIED) %>% summarise(n())
+base %>% group_by(GDLIN) %>% summarise(n())
+```
+Since those features will be important in our analysis, we decided to exclude the wrong data.
+
+```{r cleaning}
 base <- base %>% 
   mutate(MARRIED = as.numeric(MARRIED),
          MALE = as.numeric(MALE)
-  
 )
-
-plot_missing(base)
-base %>% summary()
 
 base <- base %>% filter(GDLIN<=1 & is.na(MALE)==FALSE)
 
+base <- base %>% filter(is.na(MARRIED)==FALSE)
+
+```
+
+Improving data structure and summarizing the data.
+```{r transform_data}
+
+base <- base %>% 
+  mutate(MALE = as.factor(MALE),
+         GDLIN = as.factor(GDLIN),
+         APPROVE = as.factor(APPROVE)
+  )
+
+source(here("code","function_convert_CSV_to_vector.R"))
+levels(base$MALE) <- convertCSV2Factor("MALE")
+levels(base$GDLIN) <- convertCSV2Factor("GDLIN")
+levels(base$APPROVE) <- convertCSV2Factor("APPROVE")
+base %>% summary()
+
+```
+
+Excluding Loan percentage to less or equal to 100%.
+
+```{r cleaning_LOANPRC}
+base <- base %>% filter(LOANPRC<=1)
+```
+
+Understanding data regarding Blacks
+```{r black_EDA}
 base %>% filter(BLACK == 1) %>% summary()
-base %>% filter(BLACK == 1) %>% group_by(MALE,GDLIN) %>% summarise(mean(APPROVE),
-                                                                   min(OBRAT),
-                                                                   mean(OBRAT),
-                                                                   max(OBRAT),
-                                                                   min(LOANPRC),
-                                                                   mean(LOANPRC),
-                                                                   max(LOANPRC))
+obs <- base %>% filter(BLACK == 1) %>% summarise(n()) %>% as.numeric(.)
+base %>% filter(BLACK == 1) %>% 
+  group_by(MALE,GDLIN) %>% 
+  summarise(n = n(),
+            freq = round(n/obs*100,digits =1),
+            perc_approve = round(mean(as.numeric(APPROVE))*100, digits = 2),
+            min(OBRAT),
+            perc_obrat = round(mean(OBRAT), digits = 2),
+            max(OBRAT),
+            perc_min_loanprc = round(min(LOANPRC) * 100, digits = 2),
+            perc_loanprc = round(mean(LOANPRC) * 100, digits = 2),
+            perc_max_loanprc = round(max(LOANPRC) * 100, digits = 2))
+```
+Understanding data regarding Hispanics
+```{r hispanic_EDA}
 base %>% filter(HISPAN == 1) %>% summary()
-base %>% filter(HISPAN == 1) %>% group_by(MALE,GDLIN) %>% summarise(mean(APPROVE),
-                                                                   min(OBRAT),
-                                                                   mean(OBRAT),
-                                                                   max(OBRAT),
-                                                                   min(LOANPRC),
-                                                                   mean(LOANPRC),
-                                                                   max(LOANPRC))
+obs <- base %>% filter(HISPAN == 1) %>% summarise(n()) %>% as.numeric(.)
+base %>% filter(HISPAN == 1) %>%
+  group_by(MALE,GDLIN) %>%
+  summarise(n = n(),
+            freq = round(n/obs*100,digits =1),
+            perc_approve = round(mean(as.numeric(APPROVE))*100, digits = 2),
+            min(OBRAT),
+            perc_obrat = round(mean(OBRAT), digits = 2),
+            max(OBRAT),
+            perc_min_loanprc = round(min(LOANPRC) * 100, digits = 2),
+            perc_loanprc = round(mean(LOANPRC) * 100, digits = 2),
+            perc_max_loanprc = round(max(LOANPRC) * 100, digits = 2))
+```
+Understanding data regarding White
+```{r white_EDA}
 base %>% filter(HISPAN ==0 & BLACK ==0) %>% summary()
-base %>% filter(HISPAN ==0 & BLACK ==0) %>% group_by(MALE,GDLIN) %>% summarise(mean(APPROVE),
-                                                                   min(OBRAT),
-                                                                   mean(OBRAT),
-                                                                   max(OBRAT),
-                                                                   min(LOANPRC),
-                                                                   mean(LOANPRC),
-                                                                   max(LOANPRC))
-base %>% filter(APPROVE == 1) %>% summary()
+obs <- base %>% filter(HISPAN ==0 & BLACK ==0) %>% summarise(n()) %>% as.numeric(.)
+base %>% filter(HISPAN ==0 & BLACK ==0) %>% 
+  group_by(MALE,GDLIN) %>% 
+  summarise(n = n(),
+            freq = round(n/obs*100,digits =1),
+            perc_approve = round(mean(as.numeric(APPROVE))*100, digits = 2),
+            min(OBRAT),
+            perc_obrat = round(mean(OBRAT), digits = 2),
+            max(OBRAT),
+            perc_min_loanprc = round(min(LOANPRC) * 100, digits = 2),
+            perc_loanprc = round(mean(LOANPRC) * 100, digits = 2),
+            perc_max_loanprc = round(max(LOANPRC) * 100, digits = 2))
+            
+```
+
+Graphical Analysis
+```{r graph_EDA}
+
+base <- base %>% 
+  mutate(race = case_when(
+    BLACK == 1 ~ "Black",
+    HISPAN == 1 ~ "Hisp",
+    TRUE ~"White" ) )
 
 
+base %>% 
+  ggplot(aes(x=OBRAT,color = MALE)) + 
+  geom_density() + 
+  facet_grid(race ~ APPROVE) 
 
+base %>% 
+  ggplot(aes(x=LOANPRC*100,color = MALE)) + 
+  geom_density() + 
+  facet_grid(race ~ APPROVE) 
+
+base %>% 
+  ggplot(aes(x=OBRAT,color = GDLIN)) + 
+  geom_density() + 
+  facet_grid(race ~ APPROVE)
+
+base %>% 
+  ggplot(aes(x=LOANPRC*100,color = GDLIN)) + 
+  geom_density() + 
+  facet_grid(race ~ APPROVE) 
+
+```
+
+_Estimating Models_
+
+Model considering Race
+
+```{r model_race}
+#Estimate Logit Model
+LogitModel = glm(APPROVE ~ OBRAT + BLACK + HISPAN, data = base, 
+                 family = "binomial")
+summary(LogitModel)
+
+#stargazer(LogitModel,title="Results",header = FALSE)
+
+#Generate Odds Ratios
+exp(coef(LogitModel))
+
+#Define prototypical loan applicants (you will need more than 3)
+prototype_black <- data.frame(OBRAT=mean(base$OBRAT),BLACK = 1, HISPAN = 0)
+prototype_hisp <- data.frame(OBRAT=mean(base$OBRAT),BLACK = 0, HISPAN = 1)
+prototype_white <- data.frame(OBRAT=mean(base$OBRAT),BLACK = 0, HISPAN = 0)
+
+#Predict probabilities for prototypical individuals
+prototype_black$predictedprob <- round(
+  predict (LogitModel, 
+           newdata = prototype_black,
+           type ="response")*100,
+  digits = 1)
+                                  
+    
+prototype_hisp$predictedprob <-  round(
+  predict (LogitModel, 
+           newdata = prototype_hisp,
+           type ="response")*100,
+  digits = 1)
+prototype_white$predictedprob <- round(
+  predict (LogitModel, 
+           newdata = prototype_white,
+           type ="response")*100,
+  digits = 1)
+prototype_black
+prototype_hisp
+prototype_white
+
+#Estimate Probit Model
+ProbitModel = glm(APPROVE ~ OBRAT + BLACK + HISPAN, data = base, 
+                  family = "binomial" (link = "probit"))
+summary(ProbitModel)
+
+#Predict probabilities for prototypical individuals
+prototype_black$predictedprob <- round(
+  predict (ProbitModel, 
+           newdata = prototype_black, 
+           type ="response")*100,
+  digits = 1)
+prototype_hisp$predictedprob <-  round(
+  predict (ProbitModel, 
+           newdata = prototype_hisp, 
+           type ="response")*100,
+  digits = 1)
+prototype_white$predictedprob <- round(
+  predict (ProbitModel, 
+           newdata = prototype_white, 
+           type ="response")*100,
+  digits = 1)
+
+prototype_black
+prototype_hisp
+prototype_white
+
+```
+
+Model considering Gender
+
+```{r model_gender}
+#Estimate Logit Model
+LogitModel = glm(APPROVE ~ OBRAT + MALE, data = base, 
+                 family = "binomial")
+summary(LogitModel)
+
+#Generate Odds Ratios
+exp(coef(LogitModel))
+
+#Define prototypical loan applicants 
+prototype_woman <- data.frame(OBRAT=mean(base$OBRAT),MALE = 0)
+prototype_woman <-prototype_woman %>% mutate(MALE = as.factor(MALE))
+levels(prototype_woman$MALE) <- "Female"
+prototype_men <- data.frame(OBRAT=mean(base$OBRAT),MALE = 1)
+prototype_men <- prototype_men %>% mutate(MALE = as.factor(MALE))
+levels(prototype_men$MALE) <- "Male"
+#Predict probabilities for prototypical individuals
+prototype_woman$predictedprob <- round(
+  predict (LogitModel, 
+           newdata = prototype_woman,
+           type ="response")*100,
+  digits = 1)
+                                  
+    
+prototype_men$predictedprob <-  round(
+  predict (LogitModel, 
+           newdata = prototype_men,
+           type ="response")*100,
+  digits = 1)
+
+prototype_woman
+prototype_men
+
+#Estimate Probit Model
+ProbitModel = glm(APPROVE ~ OBRAT + MALE , data = base, 
+                  family = "binomial" (link = "probit"))
+summary(ProbitModel)
+
+#Predict probabilities for prototypical individuals
+prototype_woman$predictedprob <- round(
+  predict (ProbitModel, 
+           newdata = prototype_woman, 
+           type ="response")*100,
+  digits = 1)
+prototype_men$predictedprob <-  round(
+  predict (ProbitModel, 
+           newdata = prototype_men, 
+           type ="response")*100,
+  digits = 1)
+
+
+prototype_woman
+prototype_men
 ```
