@@ -489,44 +489,58 @@ exp(coef(LogitModel))
 __(C) Define prototypical loan applicants (you will need more than 3)__
 ```{r warning=FALSE}
 prototype_black <- data.frame(Other_Obligations=mean(base$Other_Obligations),Black = 1, Hispan = 0)
+prototype_black <-prototype_black %>% mutate(Black = as.factor(Black),
+                                             Hispan = as.factor(Hispan))
+# levels(prototype_black$Black) <- "Black"
+# levels(prototype_black$Hispan) <- NA
+
 prototype_hisp <- data.frame(Other_Obligations=mean(base$Other_Obligations),Black = 0, Hispan = 1)
+prototype_hisp <-prototype_hisp %>% mutate(Black = as.factor(Black),
+                                             Hispan = as.factor(Hispan))
+# levels(prototype_hisp$Black) <- NA
+# levels(prototype_hisp$Hispan) <- "Hispan"
+
 prototype_white <- data.frame(Other_Obligations=mean(base$Other_Obligations),Black = 0, Hispan = 0)
+prototype_white <-prototype_white %>% mutate(Black = as.factor(Black),
+                                             Hispan = as.factor(Hispan))
+# levels(prototype_white$Black) <- NA
+# levels(prototype_white$Hispan) <- NA
 ```
 
 __(D) Predict probabilities for prototypical individuals__
 ```{r warning=FALSE}
-# prototype_black$predictedprob <- round(
-#   predict (LogitModel, 
-#            newdata = prototype_black,
-#            type ="response")*100,
-#   digits = 1)
-#                                   
-#     
-# prototype_hisp$predictedprob <-  round(
-#   predict (LogitModel, 
-#            newdata = prototype_hisp,
-#            type ="response")*100,
-#   digits = 1)
-# prototype_white$predictedprob <- round(
-#   predict (LogitModel, 
-#            newdata = prototype_white,
-#            type ="response")*100,
-#   digits = 1)
+prototype_black$predictedprob <- round(
+  predict (LogitModel,
+           newdata = prototype_black,
+           type ="response")*100,
+  digits = 1)
+
+
+prototype_hisp$predictedprob <-  round(
+  predict (LogitModel,
+           newdata = prototype_hisp,
+           type ="response")*100,
+  digits = 1)
+prototype_white$predictedprob <- round(
+  predict (LogitModel,
+           newdata = prototype_white,
+           type ="response")*100,
+  digits = 1)
 ```
 
 __(D-1) Predict probabilities for prototypical individuals - Black__
 ```{r warning=FALSE}
-# prototype_black
+prototype_black
 ```
 
 __(D-2) Predict probabilities for prototypical individuals - Hispan__
 ```{r warning=FALSE}
-# prototype_hisp
+prototype_hisp
 ```
 
 __(D-3) Predict probabilities for prototypical individuals - White__
 ```{r warning=FALSE}
-# prototype_white
+prototype_white
 ```
 
 __(E) Estimate Probit Model__
@@ -538,36 +552,36 @@ summary(ProbitModel)
 
 __(F) Predict probabilities for prototypical individuals__
 ```{r warning=FALSE}
-# prototype_black$predictedprob <- round(
-#   predict (ProbitModel, 
-#            newdata = prototype_black, 
-#            type ="response")*100,
-#   digits = 1)
-# prototype_hisp$predictedprob <-  round(
-#   predict (ProbitModel, 
-#            newdata = prototype_hisp, 
-#            type ="response")*100,
-#   digits = 1)
-# prototype_white$predictedprob <- round(
-#   predict (ProbitModel, 
-#            newdata = prototype_white, 
-#            type ="response")*100,
-#   digits = 1)
+prototype_black$predictedprob <- round(
+  predict (ProbitModel,
+           newdata = prototype_black,
+           type ="response")*100,
+  digits = 1)
+prototype_hisp$predictedprob <-  round(
+  predict (ProbitModel,
+           newdata = prototype_hisp,
+           type ="response")*100,
+  digits = 1)
+prototype_white$predictedprob <- round(
+  predict (ProbitModel,
+           newdata = prototype_white,
+           type ="response")*100,
+  digits = 1)
 ```
 
 __(F-1) Predict probabilities for prototypical individuals - Black__
 ```{r warning=FALSE}
-# prototype_black
+prototype_black
 ```
 
 __(F-2) Predict probabilities for prototypical individuals - Hispan__
 ```{r warning=FALSE}
-# prototype_hisp
+prototype_hisp
 ```
 
 __(F-3) Predict probabilities for prototypical individuals - White__
 ```{r warning=FALSE}
-# prototype_white
+prototype_white
 ```
 
 ## 5.2 Model considering Gender
@@ -586,35 +600,35 @@ exp(coef(LogitModel))
 
 __(C) Define prototypical loan applicants__
 ```{r warning=FALSE}
-# prototype_woman <- data.frame(OBRAT=mean(base$OBRAT),MALE = 0)
-# prototype_woman <-prototype_woman %>% mutate(MALE = as.factor(MALE))
-# levels(prototype_woman$MALE) <- "Female"
-# prototype_men <- data.frame(OBRAT=mean(base$OBRAT),MALE = 1)
-# prototype_men <- prototype_men %>% mutate(MALE = as.factor(MALE))
-# levels(prototype_men$MALE) <- "Male"
-# #Predict probabilities for prototypical individuals
-# prototype_woman$predictedprob <- round(
-#   predict (LogitModel, 
-#            newdata = prototype_woman,
-#            type ="response")*100,
-#   digits = 1)
-#                                   
-#     
-# prototype_men$predictedprob <-  round(
-#   predict (LogitModel, 
-#            newdata = prototype_men,
-#            type ="response")*100,
-#   digits = 1)
+prototype_woman <- data.frame(Other_Obligations=mean(base$Other_Obligations),Male = 0)
+prototype_woman <-prototype_woman %>% mutate(Male = as.factor(Male))
+# levels(prototype_woman$Male) <- "Female"
+prototype_men <- data.frame(Other_Obligations=mean(base$Other_Obligations),Male = 1)
+prototype_men <- prototype_men %>% mutate(Male = as.factor(Male))
+# levels(prototype_men$Male) <- "Male"
+#Predict probabilities for prototypical individuals
+prototype_woman$predictedprob <- round(
+  predict (LogitModel,
+           newdata = prototype_woman,
+           type ="response")*100,
+  digits = 1)
+
+
+prototype_men$predictedprob <-  round(
+  predict (LogitModel,
+           newdata = prototype_men,
+           type ="response")*100,
+  digits = 1)
 ```
 
 __(C-1) Define prototypical loan applicants - Female__
 ```{r warning=FALSE}
-# prototype_woman
+prototype_woman
 ```
 
 __(C-2) Define prototypical loan applicants - Male__
 ```{r warning=FALSE}
-# prototype_men
+prototype_men
 ```
 
 __(D) Estimate Probit Model__
@@ -626,24 +640,24 @@ summary(ProbitModel)
 
 __(E) Predict probabilities for prototypical individuals__
 ```{r warning=FALSE}
-# prototype_woman$predictedprob <- round(
-#   predict (ProbitModel, 
-#            newdata = prototype_woman, 
-#            type ="response")*100,
-#   digits = 1)
-# prototype_men$predictedprob <-  round(
-#   predict (ProbitModel, 
-#            newdata = prototype_men, 
-#            type ="response")*100,
-#   digits = 1)
+prototype_woman$predictedprob <- round(
+  predict (ProbitModel,
+           newdata = prototype_woman,
+           type ="response")*100,
+  digits = 1)
+prototype_men$predictedprob <-  round(
+  predict (ProbitModel,
+           newdata = prototype_men,
+           type ="response")*100,
+  digits = 1)
 ```
 
 __(E-1) Predict probabilities for prototypical individuals - Female__
 ```{r warning=FALSE}
-# prototype_woman
+prototype_woman
 ```
 
 __(E-2) Predict probabilities for prototypical individuals - Male__
 ```{r warning=FALSE}
-# prototype_men
+prototype_men
 ```
