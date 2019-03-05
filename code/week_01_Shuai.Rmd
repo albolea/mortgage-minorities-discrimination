@@ -1,0 +1,649 @@
+---
+title: "MLA"
+author: "Mark Russeff, Renato Albolea, Shuai Ma"
+subtitle: "Primary Findings"
+output:
+  html_document:
+    df_print: paged
+    toc: true
+    toc_float: true
+    toc_depth: 3
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+# Clear environment
+rm(list = ls(all = TRUE))
+
+# Clear environmet of packages
+if(is.null(sessionInfo()$otherPkgs) == FALSE)lapply(paste("package:", names(sessionInfo()$otherPkgs), sep=""), detach, character.only = TRUE, unload = TRUE)
+
+# Load Packages
+library(here)
+library(tidyverse)
+library(janitor)
+library(aod)
+library(Rcpp)
+library(htmlTable)
+```
+
+# 1. Abstract
+
+TBD
+
+# 2. Background
+
+The following abstract appeared in Alicia H. Munnell, Geoffrey M.B. Tootell, Lynn E. Browne, and James McEneaney (1996), “Mortgage Lending in Boston: Interpreting HMDA Data,” American Economic Review 86, 25-53.
+
+>_The Home Mortgage Disclosure Act was enacted to monitor minority and low-income access to the mortgage market. The data collected for this purpose show that minorities are more than twice as likely to be denied a mortgage as whites.  Yet variables correlated with both race and creditworthiness were omitted from these data, making any conclusion about race’s role in mortgage lending impossible. The Federal Reserve Board of Boston collected_ additional variables important to the mortgage lending decision….
+
+As discussed in Munnell et al (1996), the HMDA data indicate whether an applicant’s mortgage application was approved and provide several demographic characteristics.  In 1990, following the request of the Federal Reserve Board of Boston, lending institutions in the Boston area provided additional information relevant to mortgage lending decisions.  In light of the relatively small number of mortgage loan applications made by minorities, these extra variables were collected for all applications by blacks and Hispanics and for a random sample of those by whites.
+
+>_All applicants are non-Hispanic white, non Hispanic black, or Hispanic.  [In 1990 about 94% of Boston residents were white, Black, or Hispanic.](http://www.bostonplans.org/getattachment/83972a7a-c454-4aac-b3eb-02e1fddd71e3/)_
+
+# 3. Research Question
+
+  * __Controlling for relevant characteristics, is race/ethnicity associated with the outcome of a mortgage loan application?__
+
+# 4. Explortory Data Analysis
+
+## 4.1 Data Wrangling
+
+```{r load_data, include=FALSE}
+base <- read_csv(here('raw_data','MLD Data File.csv'))
+```
+
+__(A) First View of Data__ (The code and result are hid here since this is not key point of this paper, and makes this paper clean. The final data summary will be showed.)
+```{r include=FALSE}
+str(base)
+summary(base)
+```
+
+1. First Thought: 
+
+  * The following column names should be updated:
+    + GDLIN - Credit_History (credit history meets the guideline)
+    + OBRAT - Other_Obligations (other obligations as a percent of total income) 
+    + LOANPRC - Loan_Percentage (loan amount/purchase price)
+    
+  * The following variables should be changed to factors:
+    + MARRIED
+    + GDLIN
+    + BLACK
+    + HISPAN
+    + MALE
+    + APPROVE
+
+```{r include=FALSE}
+names(base) <- c("Married", "Credit_History" , "Other_Obligations" , "Black" , "Hispan" , "Male" , "Approve" , "Loan_Percentage")
+base$Married <- as.factor(base$Married)
+base$Credit_History <- as.factor(base$Credit_History)
+base$Black <- as.factor(base$Black)
+base$Hispan <- as.factor(base$Hispan)
+base$Male <- as.factor(base$Male)
+base$Approve <- as.factor((base$Approve))
+```
+
+__(B) Second View of Data__ (Code and results are hid.)
+```{r include=FALSE}
+str(base)
+summary(base)
+```
+
+2. Second Thought (criteria for subsetting data ):
+
+  * Remove the three "." from "Married"
+  * Remove the two "666" from "Credit_History"
+  * Remove the fifteen "." from "Male"
+  * Remove the value which higher than 1 from "Loan_Percentage"
+
+```{r include=FALSE}
+base <- subset(base, Loan_Percentage <= 1 & Male != "." & Married != "." & Credit_History != 666)
+base <- droplevels(base)
+```
+
+__(C) Final Data Summary__
+```{r}
+summary(base)
+```
+
+
+
+## 4.2 Race and Gender 
+
+(Code is hid from this paper, but avaiable based on request)
+
+__Findings from race and gender: __
+
+  1. THe propostion of Black and Hispanic applications account for 10% and 5% of all applications seperately. 
+  2. THe propostion of Male and Female applications account for 19% and 81% of all applications seperately. 
+  3. The smallest category in the application is "Hispanic Female" which was 1%. 
+  4. The largest category in the application is "Non-Black/Hispanic Male" which was 70%. 
+
+```{r include=FALSE}
+rg <- base %>% 
+  select(Hispan,Black,Male)
+
+rg$Hispan <- as.character(rg$Hispan)
+rg$Hispan[rg$Hispan == "1"] <- "Hispan"
+rg$Hispan[rg$Hispan == "0"] <- NA
+
+rg$Black <- as.character(rg$Black)
+rg$Black[rg$Black == "1"] <- "Black"
+rg$Black[rg$Black == "0"] <- NA
+
+rg$Male <- as.character(rg$Male)
+rg$Male[rg$Male == "1"] <- "Male"
+rg$Male[rg$Male == "0"] <- "Female" 
+
+rg$Race = ifelse(is.na(rg$Hispan), rg$Black , rg$Hispan) 
+rg$Race = ifelse(is.na(rg$Race), "Not Hispan/Black" , rg$Race) 
+colnames(rg)[colnames(rg)=="Male"] <- "Gender"
+rg$Hispan <- NULL
+rg$Black <- NULL
+rg$Gender <- as.factor(rg$Gender)
+rg$Race <- as.factor(rg$Race)
+```
+
+
+```{r warning=FALSE, echo=FALSE}
+rg_table_n <- rg %>% 
+  tabyl(Gender,Race) %>% 
+  adorn_totals(where = c("row", "col"))
+
+htmlTable(rg_table_n,
+          caption = "Total Number by Race and Gender",
+          #header = paste(c("Manufacture" , "Big" , "Medium/Small" , "No Ad" , "Total")),
+          col.columns = c("none", "#F1F0FA"),
+          col.rgroup = c("none", "azure2"))
+```
+
+```{r warning=FALSE, echo=FALSE}
+rg_table_p <- rg %>% 
+  tabyl(Gender,Race) %>% 
+  adorn_totals(where = c("row", "col")) %>% 
+  adorn_percentages(denominator = "all") %>%  
+  adorn_pct_formatting(digits = 1)
+   
+htmlTable(rg_table_p, 
+          caption = "Percentage by Race and Gender",
+          #header = paste(c("Manufacture" , "Big" , "Medium/Small" , "No Ad" , "Total")),
+          col.columns = c("none", "#F1F0FA"),
+          col.rgroup = c("none", "azure2"))
+```
+
+## 4.3 Race and Approval
+
+(Code is hid from this paper, but avaiable based on request)
+
+__Findings from race and decision: __
+
+  1. Among all appliction the approved application from Black counts for 6.6%. The approval rate for applications from Black was __66.7%__.
+  2. Among all appliction the approved application from Hispanic counts for 4.2%. The approval rate for applications from Hispanic was __77.9%__.
+  3. Among all appliction the approved application from Non-Black/Hispanic counts for 77.1%.The approval rate for applications from Non-Black\Hispanic was __91.0%__.
+  4. The average approval rate was __87.9%__.
+
+```{r include=FALSE}
+ra <- base %>% 
+  select(Hispan,Black,Approve)
+
+ra$Hispan <- as.character(ra$Hispan)
+ra$Hispan[ra$Hispan == "1"] <- "Hispan"
+ra$Hispan[ra$Hispan == "0"] <- NA
+
+ra$Black <- as.character(ra$Black)
+ra$Black[ra$Black == "1"] <- "Black"
+ra$Black[ra$Black == "0"] <- NA
+
+ra$Approve <- as.character(ra$Approve)
+ra$Approve[ra$Approve == "1"] <- "Approved"
+ra$Approve[ra$Approve == "0"] <- "Denied" 
+
+ra$Race = ifelse(is.na(ra$Hispan), ra$Black , ra$Hispan) 
+ra$Race = ifelse(is.na(ra$Race), "Not Hispan/Black" , ra$Race) 
+#colnames(ra)[colnames(ra)=="Approve"] <- "Approve"
+ra$Hispan <- NULL
+ra$Black <- NULL
+ra$Approve <- as.factor(ra$Approve)
+ra$Race <- as.factor(ra$Race)
+```
+
+
+```{r warning=FALSE, echo=FALSE}
+ra_table_n <- ra %>% 
+  tabyl(Approve, Race) %>% 
+  adorn_totals(where = c("row", "col"))
+
+htmlTable(ra_table_n,
+          caption = "Total Number by Race and Decision",
+          #header = paste(c("Manufacture" , "Big" , "Medium/Small" , "No Ad" , "Total")),
+          col.columns = c("none", "#F1F0FA"),
+          col.rgroup = c("none", "azure2"))
+```
+
+
+```{r warning=FALSE, echo=FALSE}
+ra_table_p <- ra %>% 
+  tabyl(Approve, Race) %>% 
+  adorn_totals(where = c("row", "col")) %>% 
+  adorn_percentages(denominator = "all") %>%  
+  adorn_pct_formatting(digits = 1)
+   
+htmlTable(ra_table_p, 
+          caption = "Percentage by Race and Decision",
+          #header = paste(c("Manufacture" , "Big" , "Medium/Small" , "No Ad" , "Total")),
+          col.columns = c("none", "#F1F0FA"),
+          col.rgroup = c("none", "azure2"))
+```
+
+## 4.4 Race and Credit History
+
+(Code is hid from this paper, but avaiable based on request)
+
+__Findings from race and credit history: __
+
+  1. Among all appliction that the Black applicant with good credit history counts for __7.2%__. 72.3% Black applicants had good credite history.
+  2. Among all appliction that the Hispanic applicat with good credit history counts for __4.6%__. 86.5% Hispanic applicants had good credite history.
+  3. Among all appliction that the Non-Black/Hispanic applicat with good credit history counts for __79.6%__. 93.9% Non-Black/Hispanic applicants had good credite history.
+  4. The average approval rate was __91.4%__.
+  
+  
+```{r include=FALSE}
+rc <- base %>% 
+  select(Hispan,Black,Credit_History)
+
+rc$Hispan <- as.character(rc$Hispan)
+rc$Hispan[rc$Hispan == "1"] <- "Hispan"
+rc$Hispan[rc$Hispan == "0"] <- NA
+
+rc$Black <- as.character(rc$Black)
+rc$Black[rc$Black == "1"] <- "Black"
+rc$Black[rc$Black == "0"] <- NA
+
+rc$Credit_History <- as.character(rc$Credit_History)
+rc$Credit_History[rc$Credit_History == "1"] <- "Good"
+rc$Credit_History[rc$Credit_History == "0"] <- "Not Good" 
+
+rc$Race = ifelse(is.na(rc$Hispan), rc$Black , rc$Hispan) 
+rc$Race = ifelse(is.na(rc$Race), "Not Hispan/Black" , rc$Race) 
+#colnames(ra)[colnames(ra)=="Approve"] <- "Approve"
+rc$Hispan <- NULL
+rc$Black <- NULL
+rc$Credit_History <- as.factor(rc$Credit_History)
+rc$Race <- as.factor(rc$Race)
+```
+
+
+```{r warning=FALSE, echo=FALSE}
+rc_table_n <- rc %>% 
+  tabyl(Credit_History, Race) %>% 
+  adorn_totals(where = c("row", "col"))
+
+htmlTable(rc_table_n,
+          caption = "Total Number by Race and Credit History",
+          #header = paste(c("Manufacture" , "Big" , "Medium/Small" , "No Ad" , "Total")),
+          col.columns = c("none", "#F1F0FA"),
+          col.rgroup = c("none", "azure2"))
+```
+
+
+```{r warning=FALSE, echo=FALSE}
+rc_table_p <- rc %>% 
+  tabyl(Credit_History, Race) %>% 
+  adorn_totals(where = c("row", "col")) %>% 
+  adorn_percentages(denominator = "all") %>%  
+  adorn_pct_formatting(digits = 1)
+   
+htmlTable(rc_table_p, 
+          caption = "Percentage by Race and Credit History",
+          #header = paste(c("Manufacture" , "Big" , "Medium/Small" , "No Ad" , "Total")),
+          col.columns = c("none", "#F1F0FA"),
+          col.rgroup = c("none", "azure2"))
+```
+
+## 4.5 Race, Credit History, Decision
+
+```{r include=FALSE}
+rcd <- base %>% 
+    select(Hispan,Black,Credit_History, Approve)
+rcd$Hispan <- as.character(rcd$Hispan)
+rcd$Hispan[rcd$Hispan == "1"] <- "Hispan"
+rcd$Hispan[rcd$Hispan == "0"] <- NA
+
+rcd$Black <- as.character(rcd$Black)
+rcd$Black[rcd$Black == "1"] <- "Black"
+rcd$Black[rcd$Black == "0"] <- NA
+
+rcd$Credit_History <- as.character(rcd$Credit_History)
+rcd$Credit_History[rcd$Credit_History == "1"] <- "Good"
+rcd$Credit_History[rcd$Credit_History == "0"] <- "Not Good" 
+
+rcd$Approve <- as.character(rcd$Approve)
+rcd$Approve[rcd$Approve == "1"] <- "Approved"
+rcd$Approve[rcd$Approve == "0"] <- "Denied" 
+
+rcd$Race = ifelse(is.na(rcd$Hispan), rcd$Black , rcd$Hispan)
+rcd$Race = ifelse(is.na(rcd$Race), "Not Hispan/Black" , rcd$Race)
+
+rcd$Hispan <- NULL
+rcd$Black <- NULL
+
+```
+
+```{r include=FALSE}
+rcd_n_1 <- rcd %>% 
+  group_by(Race, Credit_History, Approve) %>% 
+  summarise(count = n())
+
+
+rcd_n_2 <- rcd %>% 
+  group_by(Race, Credit_History) %>% 
+  summarise(count = n())
+
+
+rcd_n <- left_join(rcd_n_1,rcd_n_2, by = c("Race" = "Race", "Credit_History" = "Credit_History"))
+rcd_n$Category <- paste(rcd_n$Race, "-", rcd_n$Credit_History)
+rcd_n$Rate <- rcd_n$count.x/rcd_n$count.y
+rm(rcd_n_1)
+rm(rcd_n_2)
+
+colnames(rcd_n)[colnames(rcd_n)=="count.x"] <- "Counts"
+colnames(rcd_n)[colnames(rcd_n)=="Approve"] <- "Decision"
+
+rcd_n$count.y <- NULL
+rcd_n$Race <- NULL
+rcd_n$Credit_History <- NULL
+
+rcd_n <- rcd_n[c("Category", "Decision", "Counts" , "Rate")]
+rcd_n$Rate <- format(round(rcd_n$Rate, 3), nsmall = 3)
+```
+
+__Findings from race, credit history, and decision: __
+
+  1. Among all applict who were with "Good" credit history, the approval rate was __"Not Hispan/Black" > "Black" > "Hispan"__.
+  2. Among all applict who were with "Not Good" credit history, the approval rate was __"Not Hispan/Black" > "Hispan" > "Black"__.
+
+
+__(A)Approveal/Denial Rate with Good Credit History by Races__
+```{r echo=FALSE}
+htmlTable(filter(rcd_n, Category == "Black - Good"),
+          caption = "Approval Rate by Race and Credit History - Black with Good Credit",
+          #header = paste(c("Manufacture" , "Big" , "Medium/Small" , "No Ad" , "Total")),
+          # col.columns = c("none", "#F1F0FA"),
+          col.rgroup = c("none", "azure2")
+)
+```
+
+```{r echo=FALSE}
+htmlTable(filter(rcd_n, Category == "Hispan - Good"),
+          caption = "Approval Rate by Race and Credit History - Hispan with Good Credit",
+          #header = paste(c("Manufacture" , "Big" , "Medium/Small" , "No Ad" , "Total")),
+          # col.columns = c("none", "#F1F0FA"),
+          col.rgroup = c("none", "azure2")
+)
+```
+
+
+```{r echo=FALSE}
+htmlTable(filter(rcd_n, Category == "Not Hispan/Black - Good"),
+          caption = "Approval Rate by Race and Credit History - Hispan with Good Credit",
+          #header = paste(c("Manufacture" , "Big" , "Medium/Small" , "No Ad" , "Total")),
+          # col.columns = c("none", "#F1F0FA"),
+          col.rgroup = c("none", "azure2")
+)
+```
+
+
+__(B)Approveal/Denial Rate with Not Good Credit History by Races__
+```{r echo=FALSE}
+htmlTable(filter(rcd_n, Category == "Black - Not Good"),
+          caption = "Approval Rate by Race and Credit History - Black with Not Good Credit",
+          #header = paste(c("Manufacture" , "Big" , "Medium/Small" , "No Ad" , "Total")),
+          # col.columns = c("none", "#F1F0FA"),
+          col.rgroup = c("none", "azure2")
+)
+```
+
+```{r echo=FALSE}
+htmlTable(filter(rcd_n, Category == "Hispan - Not Good"),
+          caption = "Approval Rate by Race and Credit History - Black with Not Good Credit",
+          #header = paste(c("Manufacture" , "Big" , "Medium/Small" , "No Ad" , "Total")),
+          # col.columns = c("none", "#F1F0FA"),
+          col.rgroup = c("none", "azure2")
+)
+```
+
+```{r echo=FALSE}
+htmlTable(filter(rcd_n, Category == "Not Hispan/Black - Not Good"),
+          caption = "Approval Rate by Race and Credit History - Black with Not Good Credit",
+          #header = paste(c("Manufacture" , "Big" , "Medium/Small" , "No Ad" , "Total")),
+          # col.columns = c("none", "#F1F0FA"),
+          col.rgroup = c("none", "azure2")
+)
+```
+
+## 4.6 Distribution of loan rate 
+
+* loan rate = loan amount / purchase price
+
+__Findings from distribution of loan rate by races and genders: __
+
+  1. Fig 1 and Fig 2 below indicate that, regardless the race and gender, most of applicats applies for the loan amout around 75% to 90% of the purchase price.
+
+```{r echo=FALSE, fig.width=8}
+lp <- base %>% 
+  select(Black, Hispan, Loan_Percentage)
+
+lp$Hispan <- as.character(lp$Hispan)
+lp$Hispan[lp$Hispan == "1"] <- "Hispan"
+lp$Hispan[lp$Hispan == "0"] <- NA
+
+lp$Black <- as.character(lp$Black)
+lp$Black[lp$Black == "1"] <- "Black"
+lp$Black[lp$Black == "0"] <- NA
+
+lp$Race = ifelse(is.na(lp$Hispan), lp$Black , lp$Hispan)
+lp$Race = ifelse(is.na(lp$Race), "Not Hispan/Black" , lp$Race)
+
+lp$Hispan <- NULL
+lp$Black <- NULL
+
+
+ggplot(data = lp, aes(x = Loan_Percentage)) + geom_histogram(bins = 45, fill="deepskyblue2") + theme_bw() + facet_grid(Race ~ .) + labs(title = "Fig 1. Distribution of Loan Rate by Races", subtitle = "Loan Rate = Loan Amount / Purchase Price", x = "Loan Rate" , y = "Counts")
+```
+
+
+```{r echo=FALSE, fig.width=8, warning=FALSE}
+lp_g <- base %>% 
+  select(Male, Loan_Percentage)
+
+
+lp_g$Male <- as.character(lp_g$Male)
+lp_g$Gender[lp_g$Male == "1"] <- "Male"
+lp_g$Gender[lp_g$Male == "0"] <- "Female"
+lp_g$Gender <- as.factor(lp_g$Gender)
+
+lp_g$Male <- NULL
+
+
+
+ggplot(data = lp_g, aes(x = Loan_Percentage)) + geom_histogram(bins = 45, fill="deepskyblue2") + theme_bw() + facet_grid(Gender ~ .) + labs(title = "Fig 2. Distribution of Loan Rate by Gender", subtitle = "Loan Rate = Loan Amount / Purchase Price", x = "Loan Rate" , y = "Counts")
+```
+
+# 5. Estimating Models
+
+## 5.1 Model considering Race
+
+__(A) Estimate Logit Model__
+```{r warning=FALSE}
+LogitModel = glm(Approve ~ Other_Obligations + Black + Hispan, data = base , family = "binomial")
+summary(LogitModel)
+```
+
+__(B) Generate Odds Ratios__
+```{r warning=FALSE}
+exp(coef(LogitModel))
+```
+
+__(C) Define prototypical loan applicants (you will need more than 3)__
+```{r warning=FALSE}
+prototype_black <- data.frame(Other_Obligations=mean(base$Other_Obligations),Black = 1, Hispan = 0)
+prototype_hisp <- data.frame(Other_Obligations=mean(base$Other_Obligations),Black = 0, Hispan = 1)
+prototype_white <- data.frame(Other_Obligations=mean(base$Other_Obligations),Black = 0, Hispan = 0)
+```
+
+__(D) Predict probabilities for prototypical individuals__
+```{r warning=FALSE}
+# prototype_black$predictedprob <- round(
+#   predict (LogitModel, 
+#            newdata = prototype_black,
+#            type ="response")*100,
+#   digits = 1)
+#                                   
+#     
+# prototype_hisp$predictedprob <-  round(
+#   predict (LogitModel, 
+#            newdata = prototype_hisp,
+#            type ="response")*100,
+#   digits = 1)
+# prototype_white$predictedprob <- round(
+#   predict (LogitModel, 
+#            newdata = prototype_white,
+#            type ="response")*100,
+#   digits = 1)
+```
+
+__(D-1) Predict probabilities for prototypical individuals - Black__
+```{r warning=FALSE}
+# prototype_black
+```
+
+__(D-2) Predict probabilities for prototypical individuals - Hispan__
+```{r warning=FALSE}
+# prototype_hisp
+```
+
+__(D-3) Predict probabilities for prototypical individuals - White__
+```{r warning=FALSE}
+# prototype_white
+```
+
+__(E) Estimate Probit Model__
+```{r warning=FALSE}
+ProbitModel = glm(Approve ~ Other_Obligations + Black + Hispan, data = base, 
+                  family = "binomial" (link = "probit"))
+summary(ProbitModel)
+```
+
+__(F) Predict probabilities for prototypical individuals__
+```{r warning=FALSE}
+# prototype_black$predictedprob <- round(
+#   predict (ProbitModel, 
+#            newdata = prototype_black, 
+#            type ="response")*100,
+#   digits = 1)
+# prototype_hisp$predictedprob <-  round(
+#   predict (ProbitModel, 
+#            newdata = prototype_hisp, 
+#            type ="response")*100,
+#   digits = 1)
+# prototype_white$predictedprob <- round(
+#   predict (ProbitModel, 
+#            newdata = prototype_white, 
+#            type ="response")*100,
+#   digits = 1)
+```
+
+__(F-1) Predict probabilities for prototypical individuals - Black__
+```{r warning=FALSE}
+# prototype_black
+```
+
+__(F-2) Predict probabilities for prototypical individuals - Hispan__
+```{r warning=FALSE}
+# prototype_hisp
+```
+
+__(F-3) Predict probabilities for prototypical individuals - White__
+```{r warning=FALSE}
+# prototype_white
+```
+
+## 5.2 Model considering Gender
+
+__(A) Estimate Logit Model__
+```{r warning=FALSE}
+LogitModel = glm(Approve ~ Other_Obligations + Male, data = base, 
+                 family = "binomial")
+summary(LogitModel)
+```
+
+__(B) Generate Odds Ratios__
+```{r warning=FALSE}
+exp(coef(LogitModel))
+```
+
+__(C) Define prototypical loan applicants__
+```{r warning=FALSE}
+# prototype_woman <- data.frame(OBRAT=mean(base$OBRAT),MALE = 0)
+# prototype_woman <-prototype_woman %>% mutate(MALE = as.factor(MALE))
+# levels(prototype_woman$MALE) <- "Female"
+# prototype_men <- data.frame(OBRAT=mean(base$OBRAT),MALE = 1)
+# prototype_men <- prototype_men %>% mutate(MALE = as.factor(MALE))
+# levels(prototype_men$MALE) <- "Male"
+# #Predict probabilities for prototypical individuals
+# prototype_woman$predictedprob <- round(
+#   predict (LogitModel, 
+#            newdata = prototype_woman,
+#            type ="response")*100,
+#   digits = 1)
+#                                   
+#     
+# prototype_men$predictedprob <-  round(
+#   predict (LogitModel, 
+#            newdata = prototype_men,
+#            type ="response")*100,
+#   digits = 1)
+```
+
+__(C-1) Define prototypical loan applicants - Female__
+```{r warning=FALSE}
+# prototype_woman
+```
+
+__(C-2) Define prototypical loan applicants - Male__
+```{r warning=FALSE}
+# prototype_men
+```
+
+__(D) Estimate Probit Model__
+```{r warning=FALSE}
+ProbitModel = glm(Approve ~ Other_Obligations + Male , data = base, 
+                  family = "binomial" (link = "probit"))
+summary(ProbitModel)
+```
+
+__(E) Predict probabilities for prototypical individuals__
+```{r warning=FALSE}
+# prototype_woman$predictedprob <- round(
+#   predict (ProbitModel, 
+#            newdata = prototype_woman, 
+#            type ="response")*100,
+#   digits = 1)
+# prototype_men$predictedprob <-  round(
+#   predict (ProbitModel, 
+#            newdata = prototype_men, 
+#            type ="response")*100,
+#   digits = 1)
+```
+
+__(E-1) Predict probabilities for prototypical individuals - Female__
+```{r warning=FALSE}
+# prototype_woman
+```
+
+__(E-2) Predict probabilities for prototypical individuals - Male__
+```{r warning=FALSE}
+# prototype_men
+```
