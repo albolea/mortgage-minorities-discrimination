@@ -1358,10 +1358,17 @@ summary(LogitModel)</code></pre>
 ## AIC: 1316.4
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
+<p>The signals of the model suggest that:<br />
+1. Increases in Other Obligation diminish the likelihood of approval of the loan, which makes sense.<br />
+2. Being Black or Hispanic diminish your likelihood of approval of the loan, which doesn’t make sense (your ethnicity doesn’t interfere to your capacity to pay a loan), but was expected.</p>
 <p><strong>(B) Generate Odds Ratios</strong></p>
 <pre class="r"><code>exp(coef(LogitModel))</code></pre>
 <pre><code>##       (Intercept) Other_Obligations            Black1           Hispan1 
 ##        60.4811395         0.9478570         0.2222449         0.3661287</code></pre>
+<p>The Odd ratios suggest that:<br />
+1. White people had 4.5 times the odds of being approved for a loan as a black person;(p&lt;0.01)<br />
+2. White people had 2.73 times the odds of being approved for a loan as a Hispanic person;(p&lt;0.01)<br />
+3. One unit of increase in other obligations reduce in 5.21 percentage the odds of being approved for a loan in ;(p&lt;0.01)</p>
 <p><strong>(C) Define prototypical loan applicants (you will need more than 3)</strong></p>
 <pre class="r"><code>prototype_black &lt;- data.frame(Other_Obligations=mean(base$Other_Obligations),Black = 1, Hispan = 0)
 prototype_black &lt;-prototype_black %&gt;% mutate(Black = as.factor(Black),
@@ -1419,6 +1426,7 @@ prototype_white$predictedprob &lt;- round(
 {"columns":[{"label":["Other_Obligations"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Black"],"name":[2],"type":["fctr"],"align":["left"]},{"label":["Hispan"],"name":[3],"type":["fctr"],"align":["left"]},{"label":["predictedprob"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"32.36561","2":"0","3":"0","4":"91.4"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
+<p>We can see that White man with % of other obligations has 91.4% of chances to be approved for a loan. At the same situation, black people have, for the same situation only 70.4% of chances to be approved for a loan and Hispanics have only 79.6% of chances to be approved for a loan.</p>
 <p><strong>(E) Estimate Probit Model</strong></p>
 <pre class="r"><code>ProbitModel = glm(Approve ~ Other_Obligations + Black + Hispan, data = base, 
                   family = &quot;binomial&quot; (link = &quot;probit&quot;))
@@ -1448,6 +1456,9 @@ summary(ProbitModel)</code></pre>
 ## AIC: 1319.5
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
+<p>The signals of the model suggest that:<br />
+1. Increases in Other Obligation diminish the likelihood of approval of the loan, which makes sense.<br />
+2. Being Black or Hispanic diminish your likelihood of approval of the loan, which doesn’t make sense (your ethnicity doesn’t interfere to your capacity to pay a loan), but was expected.</p>
 <p><strong>(F) Predict probabilities for prototypical individuals</strong></p>
 <pre class="r"><code>prototype_black$predictedprob &lt;- round(
   predict (ProbitModel,
@@ -1485,9 +1496,8 @@ prototype_white$predictedprob &lt;- round(
 {"columns":[{"label":["Other_Obligations"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Black"],"name":[2],"type":["fctr"],"align":["left"]},{"label":["Hispan"],"name":[3],"type":["fctr"],"align":["left"]},{"label":["predictedprob"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"32.36561","2":"0","3":"0","4":"91.3"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-</div>
-<div id="model-considering-gender" class="section level2">
-<h2>5.2 Model considering Gender</h2>
+<p>We can see that White man with 32.37% of other obligations has 91.3% of chances to be approved for a loan. At the same situation, black people have, for the same situation only 69.5% of chances to be approved for a loan and Hispanics have only 79.4% of chances to be approved for a loan.<br />
+The results are consistent between both models. ## 5.2 Model considering Gender</p>
 <p><strong>(A) Estimate Logit Model</strong></p>
 <pre class="r"><code>LogitModel = glm(Approve ~ Other_Obligations + Male, data = base, 
                  family = &quot;binomial&quot;)
@@ -1516,11 +1526,16 @@ summary(LogitModel)</code></pre>
 ## AIC: 1384.3
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
-<p><strong>(B) Generate Odds Ratios</strong></p>
+<p>The signals of the model suggest that:<br />
+1. Increases in Other Obligation diminish the likelihood of approval of the loan, which makes sense.<br />
+2. Being woman diminish your likelihood of approval of the loan, which doesn’t make sense (your gender doesn’t interfere to your capacity to pay a loan), but was expected. <strong>(B) Generate Odds Ratios</strong></p>
 <pre class="r"><code>exp(coef(LogitModel))</code></pre>
 <pre><code>##       (Intercept) Other_Obligations             Male1 
 ##        49.9258045         0.9418374         1.1267374</code></pre>
-<p><strong>(C) Define prototypical loan applicants</strong></p>
+<p>The Odd ratios suggest that:<br />
+1. Man had 1.13 times the odds of being approved for a loan as a woman;(p&lt;0.01)<br />
+2. One unit of increase in other obligations reduce in 5.82 percentage the odds of being approved for a loan in ;(p&lt;0.01)<br />
+<strong>(C) Define prototypical loan applicants</strong></p>
 <pre class="r"><code>prototype_woman &lt;- data.frame(Other_Obligations=mean(base$Other_Obligations),Male = 0)
 prototype_woman &lt;-prototype_woman %&gt;% mutate(Male = as.factor(Male))
 # levels(prototype_woman$Male) &lt;- &quot;Female&quot;
@@ -1554,6 +1569,7 @@ prototype_men$predictedprob &lt;-  round(
 {"columns":[{"label":["Other_Obligations"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Male"],"name":[2],"type":["fctr"],"align":["left"]},{"label":["predictedprob"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"32.36561","2":"1","3":"89"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
+<p>Both Man and Woman have the similar probabilities of being approved for a loan considering they have 32.37% of other obligation</p>
 <p><strong>(D) Estimate Probit Model</strong></p>
 <pre class="r"><code>ProbitModel = glm(Approve ~ Other_Obligations + Male , data = base, 
                   family = &quot;binomial&quot; (link = &quot;probit&quot;))
@@ -1582,7 +1598,9 @@ summary(ProbitModel)</code></pre>
 ## AIC: 1387.7
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
-<p><strong>(E) Predict probabilities for prototypical individuals</strong></p>
+<p>The signals of the model suggest that:<br />
+1. Increases in Other Obligation diminish the likelihood of approval of the loan, which makes sense.<br />
+2. Being woman diminish your likelihood of approval of the loan, which doesn’t make sense (your gender doesn’t interfere to your capacity to pay a loan), but was expected. <strong>(E) Predict probabilities for prototypical individuals</strong></p>
 <pre class="r"><code>prototype_woman$predictedprob &lt;- round(
   predict (ProbitModel,
            newdata = prototype_woman,
@@ -1607,6 +1625,7 @@ prototype_men$predictedprob &lt;-  round(
 {"columns":[{"label":["Other_Obligations"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Male"],"name":[2],"type":["fctr"],"align":["left"]},{"label":["predictedprob"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"32.36561","2":"1","3":"88.7"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
+<p>The results are consistent between both models.</p>
 </div>
 </div>
 
