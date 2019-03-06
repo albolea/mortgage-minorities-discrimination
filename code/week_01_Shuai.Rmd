@@ -91,7 +91,7 @@ str(base)
 summary(base)
 ```
 
-2. Second Thought (criteria for subsetting data ):
+2. Second Thought (criteria for sub-setting data ):
 
   * Remove the three "." from "Married"
   * Remove the two "666" from "Credit_History"
@@ -112,12 +112,12 @@ summary(base)
 
 ## 4.2 Race and Gender 
 
-(Code is hid from this paper, but avaiable based on request)
+(Code is hid from this paper, but available based on request)
 
 __Findings from race and gender: __
 
-  1. THe propostion of Black and Hispanic applications account for 10% and 5% of all applications seperately. 
-  2. THe propostion of Male and Female applications account for 19% and 81% of all applications seperately. 
+  1. The proportion of Black and Hispanic applications account for 10% and 5% of all applications separately. 
+  2. The proportion of Male and Female applications account for 19% and 81% of all applications separately. 
   3. The smallest category in the application is "Hispanic Female" which was 1%. 
   4. The largest category in the application is "Non-Black/Hispanic Male" which was 70%. 
 
@@ -175,13 +175,13 @@ htmlTable(rg_table_p,
 
 ## 4.3 Race and Approval
 
-(Code is hid from this paper, but avaiable based on request)
+(Code is hid from this paper, but available based on request)
 
 __Findings from race and decision: __
 
-  1. Among all appliction the approved application from Black counts for 6.6%. The approval rate for applications from Black was __66.7%__.
-  2. Among all appliction the approved application from Hispanic counts for 4.2%. The approval rate for applications from Hispanic was __77.9%__.
-  3. Among all appliction the approved application from Non-Black/Hispanic counts for 77.1%.The approval rate for applications from Non-Black\Hispanic was __91.0%__.
+  1. Among all applicants the approved application from Black counts for 6.6%. The approval rate for applications from Black was __66.7%__.
+  2. Among all applicants the approved application from Hispanic counts for 4.2%. The approval rate for applications from Hispanic was __77.9%__.
+  3. Among all applicants the approved application from Non-Black/Hispanic counts for 77.1%.The approval rate for applications from Non-Black\Hispanic was __91.0%__.
   4. The average approval rate was __87.9%__.
 
 ```{r include=FALSE}
@@ -239,13 +239,13 @@ htmlTable(ra_table_p,
 
 ## 4.4 Race and Credit History
 
-(Code is hid from this paper, but avaiable based on request)
+(Code is hid from this paper, but available based on request)
 
 __Findings from race and credit history: __
 
-  1. Among all appliction that the Black applicant with good credit history counts for __7.2%__. 72.3% Black applicants had good credite history.
-  2. Among all appliction that the Hispanic applicat with good credit history counts for __4.6%__. 86.5% Hispanic applicants had good credite history.
-  3. Among all appliction that the Non-Black/Hispanic applicat with good credit history counts for __79.6%__. 93.9% Non-Black/Hispanic applicants had good credite history.
+  1. Among all applicants that the Black applicant with good credit history counts for __7.2%__. 72.3% Black applicants had good credit history.
+  2. Among all applicants that the Hispanic applicants with good credit history counts for __4.6%__. 86.5% Hispanic applicants had good credit history.
+  3. Among all applicants that the Non-Black/Hispanic applicants with good credit history counts for __79.6%__. 93.9% Non-Black/Hispanic applicants had good credit history.
   4. The average approval rate was __91.4%__.
   
   
@@ -361,8 +361,8 @@ rcd_n$Rate <- format(round(rcd_n$Rate, 3), nsmall = 3)
 
 __Findings from race, credit history, and decision: __
 
-  1. Among all applict who were with "Good" credit history, the approval rate was __"Not Hispan/Black" > "Black" > "Hispan"__.
-  2. Among all applict who were with "Not Good" credit history, the approval rate was __"Not Hispan/Black" > "Hispan" > "Black"__.
+  1. Among all applicants who were with "Good" credit history, the approval rate was __"Not Hispan/Black" > "Black" > "Hispan"__.
+  2. Among all applicants who were with "Not Good" credit history, the approval rate was __"Not Hispan/Black" > "Hispan" > "Black"__.
 
 
 __(A)Approveal/Denial Rate with Good Credit History by Races__
@@ -429,7 +429,7 @@ htmlTable(filter(rcd_n, Category == "Not Hispan/Black - Not Good"),
 
 __Findings from distribution of loan rate by races and genders: __
 
-  1. Fig 1 and Fig 2 below indicate that, regardless the race and gender, most of applicats applies for the loan amout around 75% to 90% of the purchase price.
+  1. Fig 1 and Fig 2 below indicate that, regardless the race and gender, most of applicants applies for the loan amount around 75% to 90% of the purchase price.
 
 ```{r echo=FALSE, fig.width=8}
 lp <- base %>% 
@@ -480,15 +480,19 @@ __(A) Estimate Logit Model__
 LogitModel = glm(Approve ~ Other_Obligations + Black + Hispan, data = base , family = "binomial")
 summary(LogitModel)
 ```
-The signals of the model suggest that:  
+
+__The signals of the model suggest that:__
+
   1.	Increases in Other Obligation diminish the likelihood of approval of the loan, which makes sense.  
-  2.	Being Black or Hispanic diminish your likelihood of approval of the loan, which doesn’t make sense (your ethnicity doesn’t interfere to your capacity to pay a loan), but was expected.  
+  2.	Being Black or Hispanic diminish your likelihood of approval of the loan, which does not make sense (your ethnicity does not interfere to your capacity to pay a loan), but was expected.  
 
 __(B) Generate Odds Ratios__
 ```{r warning=FALSE}
 exp(coef(LogitModel))
 ```
-The Odd ratios suggest that:  
+
+__The Odd ratios suggest that:__
+
 1.	White people had `r round(1/exp(coef(LogitModel))[3],digits=2)` times the odds of being approved for a loan as a black person;(p<0.01)   
 2.	White people had `r round(1/exp(coef(LogitModel))[4],digits=2)` times the odds of being approved for a loan as a Hispanic person;(p<0.01)  
 3.	One unit of increase in other obligations reduce in `r round((1-exp(coef(LogitModel))[2])*100,digits=2)` percentage the odds of being approved for a loan in ;(p<0.01)    
@@ -558,9 +562,11 @@ ProbitModel = glm(Approve ~ Other_Obligations + Black + Hispan, data = base,
                   family = "binomial" (link = "probit"))
 summary(ProbitModel)
 ```
-The signals of the model suggest that:  
+
+__The signals of the model suggest that:__
+
   1.	Increases in Other Obligation diminish the likelihood of approval of the loan, which makes sense.  
-  2.	Being Black or Hispanic diminish your likelihood of approval of the loan, which doesn’t make sense (your ethnicity doesn’t interfere to your capacity to pay a loan), but was expected. 
+  2.	Being Black or Hispanic diminish your likelihood of approval of the loan, which does not make sense (your ethnicity does not interfere to your capacity to pay a loan), but was expected. 
   
 __(F) Predict probabilities for prototypical individuals__
 ```{r warning=FALSE}
@@ -595,8 +601,10 @@ __(F-3) Predict probabilities for prototypical individuals - White__
 ```{r warning=FALSE}
 prototype_white
 ```
+
 We can see that White man with `r round(prototype_hisp$Other_Obligations,digits = 2)`% of other obligations has `r round(prototype_white$predictedprob,digits = 2)`% of chances to be approved for a loan. At the same situation, black people have, for the same situation only `r round(prototype_black$predictedprob,digits = 2)`% of chances to be approved for a loan and Hispanics have only `r round(prototype_hisp$predictedprob,digits = 2)`% of chances to be approved for a loan.  
 The results are consistent between both models.
+
 ## 5.2 Model considering Gender
 
 __(A) Estimate Logit Model__
@@ -605,16 +613,22 @@ LogitModel = glm(Approve ~ Other_Obligations + Male, data = base,
                  family = "binomial")
 summary(LogitModel)
 ```
-The signals of the model suggest that:  
+
+__The signals of the model suggest that:__  
+
   1.	Increases in Other Obligation diminish the likelihood of approval of the loan, which makes sense.  
-  2.	Being woman diminish your likelihood of approval of the loan, which doesn’t make sense (your gender doesn’t interfere to your capacity to pay a loan), but was expected. 
+  2.	Being woman diminish your likelihood of approval of the loan, which does not make sense (your gender does not interfere to your capacity to pay a loan), but was expected. 
+  
 __(B) Generate Odds Ratios__
 ```{r warning=FALSE}
 exp(coef(LogitModel))
 ```
-The Odd ratios suggest that:  
+
+__The Odd ratios suggest that:__
+
 1.	Man had `r round(exp(coef(LogitModel))[3],digits=2)` times the odds of being approved for a loan as a woman;(p<0.01)   
 2.	One unit of increase in other obligations reduce in `r round((1-exp(coef(LogitModel))[2])*100,digits=2)` percentage the odds of being approved for a loan in ;(p<0.01)    
+
 __(C) Define prototypical loan applicants__
 ```{r warning=FALSE}
 prototype_woman <- data.frame(Other_Obligations=mean(base$Other_Obligations),Male = 0)
@@ -656,9 +670,11 @@ ProbitModel = glm(Approve ~ Other_Obligations + Male , data = base,
                   family = "binomial" (link = "probit"))
 summary(ProbitModel)
 ```
-The signals of the model suggest that:  
+
+__The signals of the model suggest that:__
   1.	Increases in Other Obligation diminish the likelihood of approval of the loan, which makes sense.  
-  2.	Being woman diminish your likelihood of approval of the loan, which doesn’t make sense (your gender doesn’t interfere to your capacity to pay a loan), but was expected. 
+  2.	Being woman diminish your likelihood of approval of the loan, which does not make sense (your gender does not interfere to your capacity to pay a loan), but was expected. 
+  
 __(E) Predict probabilities for prototypical individuals__
 ```{r warning=FALSE}
 prototype_woman$predictedprob <- round(
@@ -682,4 +698,5 @@ __(E-2) Predict probabilities for prototypical individuals - Male__
 ```{r warning=FALSE}
 prototype_men
 ```
+
 The results are consistent between both models.
