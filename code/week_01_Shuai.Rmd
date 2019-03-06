@@ -24,7 +24,6 @@ library(here)
 library(tidyverse)
 library(janitor)
 library(aod)
-library(Rcpp)
 library(htmlTable)
 ```
 
@@ -83,6 +82,10 @@ base$Black <- as.factor(base$Black)
 base$Hispan <- as.factor(base$Hispan)
 base$Male <- as.factor(base$Male)
 base$Approve <- as.factor((base$Approve))
+
+#Change variable Loan_Percentage to a percentage
+base <- base %>%
+  mutate(Loan_Percentage = Loan_Percentage * 100)
 ```
 
 __(B) Second View of Data__ (Code and results are hid.)
@@ -99,7 +102,7 @@ summary(base)
   * Remove the value which higher than 1 from "Loan_Percentage"
 
 ```{r include=FALSE}
-base <- subset(base, Loan_Percentage <= 1 & Male != "." & Married != "." & Credit_History != 666)
+base <- subset(base, Loan_Percentage <= 100 & Male != "." & Married != "." & Credit_History != 666)
 base <- droplevels(base)
 ```
 
@@ -477,7 +480,8 @@ ggplot(data = lp_g, aes(x = Loan_Percentage)) + geom_histogram(bins = 45, fill="
 
 __(A) Estimate Logit Model__
 ```{r warning=FALSE}
-LogitModel = glm(Approve ~ Other_Obligations + Black + Hispan, data = base , family = "binomial")
+LogitModel = glm(Approve ~ Other_Obligations + Credit_History + Loan_Percentage + Married + Black + Hispan, data = base , family = "binomial")
+
 summary(LogitModel)
 ```
 
@@ -488,7 +492,7 @@ __The signals of the model suggest that:__
 
 __(B) Generate Odds Ratios__
 ```{r warning=FALSE}
-exp(coef(LogitModel))
+cbind(exp(coef(LogitModel)), 1)
 ```
 
 __The Odd ratios suggest that:__
@@ -499,67 +503,87 @@ __The Odd ratios suggest that:__
 
 __(C) Define prototypical loan applicants (you will need more than 3)__
 ```{r warning=FALSE}
-prototype_black <- data.frame(Other_Obligations=mean(base$Other_Obligations),Black = 1, Hispan = 0)
-prototype_black <-prototype_black %>% mutate(Black = as.factor(Black),
-                                             Hispan = as.factor(Hispan))
-# levels(prototype_black$Black) <- "Black"
-# levels(prototype_black$Hispan) <- NA
 
-prototype_hisp <- data.frame(Other_Obligations=mean(base$Other_Obligations),Black = 0, Hispan = 1)
-prototype_hisp <-prototype_hisp %>% mutate(Black = as.factor(Black),
-                                             Hispan = as.factor(Hispan))
-# levels(prototype_hisp$Black) <- NA
-# levels(prototype_hisp$Hispan) <- "Hispan"
+prototype_1 <- data.frame(Other_Obligations = mean(base$Other_Obligations), Married = "1", Loan_Percentage = mean(base$Loan_Percentage), Credit_History = 1, Black = 0, Hispan = 0) %>%
+  mutate(Black = as.factor(Black), Hispan = as.factor(Hispan), Credit_History = as.factor(Credit_History))
 
-prototype_white <- data.frame(Other_Obligations=mean(base$Other_Obligations),Black = 0, Hispan = 0)
-prototype_white <-prototype_white %>% mutate(Black = as.factor(Black),
-                                             Hispan = as.factor(Hispan))
-# levels(prototype_white$Black) <- NA
-# levels(prototype_white$Hispan) <- NA
+prototype_2 <- data.frame(Other_Obligations = mean(base$Other_Obligations), Married = "1", Loan_Percentage = mean(base$Loan_Percentage), Credit_History = 1, Black = 0, Hispan = 1) %>%
+  mutate(Black = as.factor(Black), Hispan = as.factor(Hispan), Credit_History = as.factor(Credit_History))
+
+prototype_3 <- data.frame(Other_Obligations = mean(base$Other_Obligations), Married = "1", Loan_Percentage = mean(base$Loan_Percentage), Credit_History = 1, Black = 1, Hispan = 0) %>%
+  mutate(Black = as.factor(Black), Hispan = as.factor(Hispan), Credit_History = as.factor(Credit_History))
+
+prototype_4 <- data.frame(Other_Obligations = mean(base$Other_Obligations), Married = "1", Loan_Percentage = mean(base$Loan_Percentage), Credit_History = 0, Black = 0, Hispan = 0) %>%
+  mutate(Black = as.factor(Black), Hispan = as.factor(Hispan), Credit_History = as.factor(Credit_History))
+
+prototype_5 <- data.frame(Other_Obligations = mean(base$Other_Obligations), Married = "1", Loan_Percentage = mean(base$Loan_Percentage), Credit_History = 0, Black = 0, Hispan = 1) %>%
+  mutate(Black = as.factor(Black), Hispan = as.factor(Hispan), Credit_History = as.factor(Credit_History))
+
+prototype_6 <- data.frame(Other_Obligations = mean(base$Other_Obligations), Married = "1", Loan_Percentage = mean(base$Loan_Percentage), Credit_History = 0, Black = 1, Hispan = 0) %>%
+  mutate(Black = as.factor(Black), Hispan = as.factor(Hispan), Credit_History = as.factor(Credit_History))
+
+prototype_7 <- data.frame(Other_Obligations = mean(base$Other_Obligations), Married = "0", Loan_Percentage = mean(base$Loan_Percentage), Credit_History = 0, Black = 0, Hispan = 0) %>%
+  mutate(Black = as.factor(Black), Hispan = as.factor(Hispan), Credit_History = as.factor(Credit_History))
+
+prototype_8 <- data.frame(Other_Obligations = mean(base$Other_Obligations), Married = "0", Loan_Percentage = mean(base$Loan_Percentage), Credit_History = 1, Black = 0, Hispan = 1) %>%
+  mutate(Black = as.factor(Black), Hispan = as.factor(Hispan), Credit_History = as.factor(Credit_History))
+
+prototype_9 <- data.frame(Other_Obligations = mean(base$Other_Obligations), Married = "0", Loan_Percentage = mean(base$Loan_Percentage), Credit_History = 1, Black = 1, Hispan = 0) %>%
+  mutate(Black = as.factor(Black), Hispan = as.factor(Hispan), Credit_History = as.factor(Credit_History))
+
+prototype_10 <- data.frame(Other_Obligations = mean(base$Other_Obligations), Married = "0", Loan_Percentage = mean(base$Loan_Percentage), Credit_History = 1, Black = 0, Hispan = 0) %>%
+  mutate(Black = as.factor(Black), Hispan = as.factor(Hispan), Credit_History = as.factor(Credit_History))
+
+prototype_11 <- data.frame(Other_Obligations = mean(base$Other_Obligations), Married = "0", Loan_Percentage = mean(base$Loan_Percentage), Credit_History = 0, Black = 0, Hispan = 1) %>%
+  mutate(Black = as.factor(Black), Hispan = as.factor(Hispan), Credit_History = as.factor(Credit_History))
+
+prototype_12 <- data.frame(Other_Obligations = mean(base$Other_Obligations), Married = "0", Loan_Percentage = mean(base$Loan_Percentage), Credit_History = 0, Black = 1, Hispan = 0) %>%
+  mutate(Black = as.factor(Black), Hispan = as.factor(Hispan), Credit_History = as.factor(Credit_History))
+
 ```
 
 __(D) Predict probabilities for prototypical individuals__
 ```{r warning=FALSE}
-prototype_black$predictedprob <- round(
-  predict (LogitModel,
-           newdata = prototype_black,
-           type ="response")*100,
-  digits = 1)
 
+prototype_1$predictedprob <- round(predict(LogitModel, newdata = prototype_1, type = "response")*100, digits = 1)
 
-prototype_hisp$predictedprob <-  round(
-  predict (LogitModel,
-           newdata = prototype_hisp,
-           type ="response")*100,
-  digits = 1)
-prototype_white$predictedprob <- round(
-  predict (LogitModel,
-           newdata = prototype_white,
-           type ="response")*100,
-  digits = 1)
+prototype_2$predictedprob <- round(predict(LogitModel, newdata = prototype_2, type = "response")*100, digits = 1)
+
+prototype_3$predictedprob <- round(predict(LogitModel, newdata = prototype_3, type = "response")*100, digits = 1)
+
+prototype_4$predictedprob <- round(predict(LogitModel, newdata = prototype_4, type = "response")*100, digits = 1)
+
+prototype_5$predictedprob <- round(predict(LogitModel, newdata = prototype_5, type = "response")*100, digits = 1)
+
+prototype_6$predictedprob <- round(predict(LogitModel, newdata = prototype_6, type = "response")*100, digits = 1)
+
+prototype_7$predictedprob <- round(predict(LogitModel, newdata = prototype_7, type = "response")*100, digits = 1)
+
+prototype_8$predictedprob <- round(predict(LogitModel, newdata = prototype_8, type = "response")*100, digits = 1)
+
+prototype_9$predictedprob <- round(predict(LogitModel, newdata = prototype_9, type = "response")*100, digits = 1)
+
+prototype_10$predictedprob <- round(predict(LogitModel, newdata = prototype_10, type = "response")*100, digits = 1)
+
+prototype_11$predictedprob <- round(predict(LogitModel, newdata = prototype_11, type = "response")*100, digits = 1)
+
+prototype_12$predictedprob <- round(predict(LogitModel, newdata = prototype_12, type = "response")*100, digits = 1)
+
 ```
 
-__(D-1) Predict probabilities for prototypical individuals - Black__
+__(D-1) Predict probabilities for prototypical individuals__
 ```{r warning=FALSE}
-prototype_black
+rbind.data.frame(prototype_1, prototype_2, prototype_3, prototype_4, prototype_5, 
+    prototype_6, prototype_7, prototype_8, prototype_9, prototype_10, prototype_11, 
+    prototype_12)
 ```
 
-__(D-2) Predict probabilities for prototypical individuals - Hispan__
-```{r warning=FALSE}
-prototype_hisp
-```
-
-__(D-3) Predict probabilities for prototypical individuals - White__
-```{r warning=FALSE}
-prototype_white
-```
-
-We can see that White man with % of other obligations has `r round(prototype_white$predictedprob,digits = 2)`% of chances to be approved for a loan. At the same situation, black people have, for the same situation only `r round(prototype_black$predictedprob,digits = 2)`% of chances to be approved for a loan and Hispanics have only `r round(prototype_hisp$predictedprob,digits = 2)`% of chances to be approved for a loan.
+We can see that White man with % of other obligations has `r round(prototype_1$predictedprob,digits = 2)`% of chances to be approved for a loan. At the same situation, black people have, for the same situation only `r round(prototype_3$predictedprob,digits = 2)`% of chances to be approved for a loan and Hispanics have only `r round(prototype_2$predictedprob,digits = 2)`% of chances to be approved for a loan.
 
 __(E) Estimate Probit Model__
 ```{r warning=FALSE}
-ProbitModel = glm(Approve ~ Other_Obligations + Black + Hispan, data = base, 
-                  family = "binomial" (link = "probit"))
+ProbitModel = glm(Approve ~ Other_Obligations + Credit_History + Loan_Percentage + Married + Black + Hispan, data = base, family = "binomial" (link = "probit"))
+
 summary(ProbitModel)
 ```
 
@@ -570,39 +594,40 @@ __The signals of the model suggest that:__
   
 __(F) Predict probabilities for prototypical individuals__
 ```{r warning=FALSE}
-prototype_black$predictedprob <- round(
-  predict (ProbitModel,
-           newdata = prototype_black,
-           type ="response")*100,
-  digits = 1)
-prototype_hisp$predictedprob <-  round(
-  predict (ProbitModel,
-           newdata = prototype_hisp,
-           type ="response")*100,
-  digits = 1)
-prototype_white$predictedprob <- round(
-  predict (ProbitModel,
-           newdata = prototype_white,
-           type ="response")*100,
-  digits = 1)
+
+prototype_1$predictedprob <- round(predict(ProbitModel, newdata = prototype_1, type = "response")*100, digits = 1)
+
+prototype_2$predictedprob <- round(predict(ProbitModel, newdata = prototype_2, type = "response")*100, digits = 1)
+
+prototype_3$predictedprob <- round(predict(ProbitModel, newdata = prototype_3, type = "response")*100, digits = 1)
+
+prototype_4$predictedprob <- round(predict(ProbitModel, newdata = prototype_4, type = "response")*100, digits = 1)
+
+prototype_5$predictedprob <- round(predict(ProbitModel, newdata = prototype_5, type = "response")*100, digits = 1)
+
+prototype_6$predictedprob <- round(predict(ProbitModel, newdata = prototype_6, type = "response")*100, digits = 1)
+
+prototype_7$predictedprob <- round(predict(ProbitModel, newdata = prototype_7, type = "response")*100, digits = 1)
+
+prototype_8$predictedprob <- round(predict(ProbitModel, newdata = prototype_8, type = "response")*100, digits = 1)
+
+prototype_9$predictedprob <- round(predict(ProbitModel, newdata = prototype_9, type = "response")*100, digits = 1)
+
+prototype_10$predictedprob <- round(predict(ProbitModel, newdata = prototype_10, type = "response")*100, digits = 1)
+
+prototype_11$predictedprob <- round(predict(ProbitModel, newdata = prototype_11, type = "response")*100, digits = 1)
+
+prototype_12$predictedprob <- round(predict(ProbitModel, newdata = prototype_12, type = "response")*100, digits = 1)
 ```
 
-__(F-1) Predict probabilities for prototypical individuals - Black__
+__(F) Predict probabilities for prototypical individuals__
 ```{r warning=FALSE}
-prototype_black
+rbind.data.frame(prototype_1, prototype_2, prototype_3, prototype_4, prototype_5, 
+    prototype_6, prototype_7, prototype_8, prototype_9, prototype_10, prototype_11, 
+    prototype_12)
 ```
 
-__(F-2) Predict probabilities for prototypical individuals - Hispan__
-```{r warning=FALSE}
-prototype_hisp
-```
-
-__(F-3) Predict probabilities for prototypical individuals - White__
-```{r warning=FALSE}
-prototype_white
-```
-
-We can see that White man with `r round(prototype_hisp$Other_Obligations,digits = 2)`% of other obligations has `r round(prototype_white$predictedprob,digits = 2)`% of chances to be approved for a loan. At the same situation, black people have, for the same situation only `r round(prototype_black$predictedprob,digits = 2)`% of chances to be approved for a loan and Hispanics have only `r round(prototype_hisp$predictedprob,digits = 2)`% of chances to be approved for a loan.  
+We can see that White man with `r round(prototype_1$Other_Obligations,digits = 2)`% of other obligations has `r round(prototype_1$predictedprob,digits = 2)`% of chances to be approved for a loan. At the same situation, black people have, for the same situation only `r round(prototype_3$predictedprob,digits = 2)`% of chances to be approved for a loan and Hispanics have only `r round(prototype_2$predictedprob,digits = 2)`% of chances to be approved for a loan.  
 The results are consistent between both models.
 
 ## 5.2 Model considering Gender
