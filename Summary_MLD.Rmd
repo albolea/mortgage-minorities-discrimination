@@ -72,14 +72,14 @@ Statistic & \multicolumn{1}{c}{Mean} & \multicolumn{1}{c}{St. Dev.} & \multicolu
 
 ```
 \begin{table}[!htbp] \centering 
-  \caption{Logit Model} 
+  \caption{Estimated Logit Model} 
   \label{} 
 \begin{tabular}{@{\extracolsep{5pt}}lcc} 
 \\[-1.8ex]\hline 
 \hline \\[-1.8ex] 
  & \multicolumn{2}{c}{\textit{Dependent variable:}} \\ 
 \cline{2-3} 
-\\[-1.8ex] & \multicolumn{2}{c}{Approve} \\ 
+\\[-1.8ex] & \multicolumn{2}{c}{Approved Loan} \\ 
 \\[-1.8ex] & Estimate & Odds Ratio\\ 
 \hline \\[-1.8ex] 
  Meets credit guidelines & 3.766$^{***}$ & 43.227 \\ 
@@ -147,7 +147,7 @@ Loan to purchase price set at sample mean of 76.08\% \\
 \hline \\[-1.8ex] 
 Race & \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
 \cline{2-2} 
-\\[-1.8ex] & Approve \\ 
+\\[-1.8ex] & Approved Loan \\ 
 \hline \\[-1.8ex] 
   Meets credit guidelines & 2.169$^{***}$ \\ 
   & (0.123) \\ 
