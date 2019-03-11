@@ -1,0 +1,203 @@
+---
+title: "Mortgage Lending Decisions"
+author: "Mark Russeff, Renato Albolea, Shuai Ma"
+subtitle: Summary Findings
+output:
+  pdf_document: default
+  word_document: default
+  html_document:
+    df_print: paged
+---
+&nbsp;
+&nbsp;
+
+
+\centerline{Controlling for relevant characteristics, is race/ethnicity associated with the outcome of a mortgage loan application?} 
+  
+&nbsp;
+&nbsp;
+
+
+\begin{table}[!htbp] \centering 
+  \caption{Descriptive statistics - \textbf{All}} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+Statistic & \multicolumn{1}{c}{Mean} & \multicolumn{1}{c}{St. Dev.} & \multicolumn{1}{c}{Min} & \multicolumn{1}{c}{Max} \\ 
+\hline \\[-1.8ex] 
+Approved & 0.88 & 0.33 & 0 & 1 \\ 
+Meets credit guidelines & 0.91 & 0.28 & 0 & 1 \\ 
+Other obligations (\% of income) & 32.37 & 8.25 & 0 & 95 \\ 
+Loan to purchase price (\%) & 76.08 & 16.76 & 2 & 100 \\ 
+Married & 0.66 & 0.47 & 0 & 1 \\ 
+\hline \\[-1.8ex] 
+\end{tabular} 
+\end{table}
+```{r}
+
+```
+
+\begin{table}[!htbp] \centering 
+  \caption{Descriptive statistics - \textbf{Race}} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+Statistic & \multicolumn{1}{c}{Mean} & \multicolumn{1}{c}{St. Dev.} & \multicolumn{1}{c}{Min} & \multicolumn{1}{c}{Max} \\ 
+\hline \\[-1.8ex] 
+\textbf{White} (n = 1641)\\
+\hspace{2ex}Approved & 0.91 & 0.29 & 0 & 1 \\ 
+\hspace{2ex}Meets credit guidelines & 0.94 & 0.24 & 0 & 1 \\ 
+\hspace{2ex}Other obligations (\% of income) & 31.99 & 8.18 & 0 & 95 \\ 
+\hspace{2ex}Loan to purchase price (\%) & 74.78 & 17.17 & 2 & 100 \\ 
+\hspace{2ex}Married & 0.66 & 0.47 & 0 & 1 \\ 
+\textbf{Black} (n = 192)\\
+\hspace{2ex}Approved & 0.67 & 0.47 & 0 & 1 \\ 
+\hspace{2ex}Meets credit guidelines & 0.72 & 0.45 & 0 & 1 \\ 
+\hspace{2ex}Other obligations (\% of income) & 35.03 & 8.13 & 5.60 & 63 \\ 
+\hspace{2ex}Loan to purchase price (\%) & 82.89 & 12.63 & 28.99 & 100 \\ 
+\hspace{2ex}Married & 0.61 & 0.49 & 0 & 1 \\ 
+\textbf{Hispanic} (n = 104)\\
+\hspace{2ex}Approved & 0.78 & 0.42 & 0 & 1 \\ 
+\hspace{2ex}Meets credit guidelines & 0.87 & 0.34 & 0 & 1 \\ 
+\hspace{2ex}Other obligations (\% of income) & 33.32 & 8.56 & 14.60 & 62 \\ 
+\hspace{2ex}Loan to purchase price (\%) & 83.91 & 10.92 & 40 & 100 \\ 
+\hspace{2ex}Married & 0.71 & 0.46 & 0 & 1 \\ 
+\hline \\[-1.8ex] 
+\end{tabular} 
+\end{table}
+
+```{r}
+
+```
+\begin{table}[!htbp] \centering 
+  \caption{Logit Model} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lcc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{2}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-3} 
+\\[-1.8ex] & \multicolumn{2}{c}{Approve} \\ 
+\\[-1.8ex] & Estimate & Odds Ratio\\ 
+\hline \\[-1.8ex] 
+ Meets credit guidelines & 3.766$^{***}$ & 43.227 \\ 
+  & (0.221) \\ 
+  & & \\ 
+ Other obligations (\% of income) & $-$0.034$^{***}$ & 0.967 \\ 
+  & (0.011) \\ 
+  & & \\ 
+ Loan to purchase price (\%) & $-$0.016$^{**}$ & 0.984 \\ 
+  & (0.007) \\ 
+  & & \\ 
+ Married & 0.482$^{***}$ & 1.619 \\ 
+  & (0.185) \\ 
+  & & \\ 
+ Black & $-$0.869$^{***}$ & 0.419 \\ 
+  & (0.243) \\ 
+  & & \\ 
+ Hispan & $-$0.860$^{***}$ & 0.423 \\ 
+  & (0.323) \\ 
+  & & \\ 
+ Constant & 1.233$^{*}$ & 3.431 \\ 
+  & (0.685) \\ 
+  & & \\ 
+\hline \\[-1.8ex] 
+Observations & 1,937 \\ 
+Log Likelihood & $-$462.546 \\ 
+Akaike Inf. Crit. & 939.091 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Notes:} & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\textit{Reference category:} white\\
+Standar Errors in parenthesis\\ 
+\end{tabular} 
+\end{table} 
+
+```{r}
+
+```
+\begin{table}[!htbp] \centering 
+  \caption{Predicted Probability of Loan Approval - \textbf{Logit}} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+& \multicolumn{1}{c}{White} & \multicolumn{1}{c}{Black} & \multicolumn{1}{c}{Hispanic} \\ 
+\hline \\[-1.8ex] 
+Meets credit guidelines, Married & 96.0\% & 90.9\% & 91.0\% \\
+Meets credit guidelines, Single & 93.7\% & 86.1\% & 86.2\% \\ 
+Does not meet credit guidelines, Married & 35.6\% & 18.8\% & 19.0\% \\ 
+Does not meet credit guidelines, Single & 25.5\% & 12.5\% & 12.6\% \\ 
+\hline \\[-1.8ex] 
+\textit{Notes:} Other obligations set at sample mean of 32.37\% \\
+Loan to purchase price set at sample mean of 76.08\% \\
+\end{tabular} 
+\end{table}
+```{r}
+
+```
+
+\begin{table}[!htbp] \centering 
+  \caption{Estimated Probit Model} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+Race & \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-2} 
+\\[-1.8ex] & Approve \\ 
+\hline \\[-1.8ex] 
+  Meets credit guidelines & 2.169$^{***}$ \\ 
+  & (0.123) \\ 
+  & \\
+ Other obligations (\% of income) & $-$0.016$^{***}$ \\ 
+  & (0.005) \\ 
+  & \\ 
+ Loan to purchase price (\%) & $-$0.007$^{**}$ \\ 
+  & (0.003) \\ 
+  & \\ 
+ Married & 0.239$^{***}$ \\ 
+  & (0.092) \\ 
+  & \\ 
+ Black & $-$0.450$^{***}$ \\ 
+  & (0.128) \\ 
+  & \\ 
+ Hispanic & $-$0.444$^{***}$ \\ 
+  & (0.169) \\ 
+  & \\ 
+ Constant & 0.435 \\ 
+  & (0.337) \\ 
+  & \\ 
+\hline \\[-1.8ex] 
+Observations & 1,937 \\ 
+Log Likelihood & $-$462.491 \\ 
+Akaike Inf. Crit. & 938.982 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Notes:} & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\textit{Reference category:} white\\
+Standar Errors in parenthesis\\
+\end{tabular} 
+\end{table} 
+```{r}
+
+```
+\begin{table}[!htbp] \centering 
+  \caption{Predicted Probability of Loan Approval - \textbf{Probit}} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+& \multicolumn{1}{c}{White} & \multicolumn{1}{c}{Black} & \multicolumn{1}{c}{Hispanic} \\ 
+\hline \\[-1.8ex] 
+Meets credit guidelines, Married & 96.1\% & 90.4\% & 90.5\% \\
+Meets credit guidelines, Single & 93.6\% & 85.7\% & 85.9\% \\ 
+Does not meet credit guidelines, Married & 34.0\% & 19.4\% & 19.6\% \\ 
+Does not meet credit guidelines, Single & 25.8\% & 13.5\% & 13.7\% \\ 
+\hline \\[-1.8ex] 
+\textit{Notes:} Other obligations set at sample mean of 32.37\% \\
+Loan to purchase price set at sample mean of 76.08\% \\
+\end{tabular} 
+\end{table}
