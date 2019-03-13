@@ -83,12 +83,6 @@ Statistic & \multicolumn{1}{c}{Mean} & \multicolumn{1}{c}{St. Dev.} & \multicolu
     
 \newpage      
  
-__Empirical Results__
-
-Table 3 presents the parameter estimates for our Logit Model and the corresponding odds ratios. Based on these estimates we can observe that the coefficients of “Meets credit guidelines” and “Married” are both positive. The coefficient of 3.766 for “Meets credit guidelines” is statistically significant at the 1% level and corresponds to an odds ratio of 43.227. This indicates that controlling for all other variables an applicant who meets the credit guidelines faces roughly 43.227 better odds of approval than someone who does not meet the guidelines. This demonstrates that meeting the credit guidelines is the most important factor for improving your odds of approval in our model. The coefficient of 0.482 for “Married” is statistically significant at the 1% level and corresponds to an odds ratio of 1.619. This indicates that controlling for all other variables an applicant who is married faces roughly 1.619 greater odds of approval than someone who is single. This intuitively makes sense; a married individual will likely be more financial stable and would likely be two incomes contributing to the paying of the mortgage. Based on the estimate we can also observe that the coefficients of “Loan to purchase price” and “Other obligations” are both negative. The coefficient of -0.016 for “Loan to purchase price” is statistically significant at the 5% level and corresponds to an odds ratio of 0.984. This indicates that controlling for all other variables an applicant with a 1 percentage point higher loan to purchase price ratio will face roughly 1.6% lower odds of approval than a similar applicant with a loan to purchase price 1 percentage point lower. Loans with a high loan to purchase price indicate a lower down payment and a higher risk of default for the lender, so it makes sense that as this percentage gets higher the odds of approval are diminished.  For the variable “Other obligations” we have a coefficient of -0.034 which is statistically significant at the 1% level and corresponds to an odds ratio of 0.967. This indicates that controlling for all other variables an applicant with other obligations 1 percentage point higher than another applicant will face roughly 3.3% lower odds of approval. Similar to the case with high loan to purchase ratios a high percentage of other obligations indicate a borrower who may a higher risk for the lender.  
-
-When we examine the parameter estimates for the race variables, we can observe that both “Black” and “Hispanic” are negative. The coefficient of -0.869 for “Black” corresponds to an odds ratio of 0.419 and the coefficient of -0.860 for “Hispanic” corresponds to an odds ratio of 0.423. The odds ratios indicate that a White applicant faces roughly 2.39 greater odds of approval than a Black applicant and roughly 2.36 greater odds of approval than a Hispanic applicant. This finding seems to indicated that there is evidence of racial discrimination in the lending market. Additionally, we can observe that both Blacks and Hispanics have similar odds of approval in relation to Whites, suggesting that that the racial discrimination is not specific to one minority group.
-
 __Modeling Approach__
 
 Since the mortgage decisions are only limited to “Approved” or “Denied”, which is “1” or “0” when translating into mathematical language, we chose to construct two multiple regression analyses using Probit and Logit Models. The parameters of the model were estimated using the maximal likelihood estimation method. To address our research question of whether mortgage lending institutions discriminate against minorities when making lending decisions, the variables of the most interest were included as the categorical variables of “Black” and “Hispanic” with “White” as the reference category. The other factors influencing mortgage lending decisions were “Meet credit guideline”, “Other obligations”, “Loan to purchase price”, and “Marriage”. Marital status was included because most married couples have two sources of income which can mitigate the default risk and indirectly lead to a higher probability of loan approval. Although gender could affect lending decisions, we excluded gender in this study because the sample size of female applicants was very small. Especially for female Hispanic applicants, the applications from this group only accounts for 1% of all applications. 
@@ -114,25 +108,18 @@ Table 4 presents the predicted probabilities for 12 prototypical individuals tha
 \hline \\[-1.8ex] 
  Meets credit guidelines & 3.766$^{***}$ & 43.227 \\ 
   & (0.221) \\ 
-  & & \\ 
  Other obligations (\% of income) & $-$0.034$^{***}$ & 0.967 \\ 
   & (0.011) \\ 
-  & & \\ 
  Loan to purchase price (\%) & $-$0.016$^{**}$ & 0.984 \\ 
   & (0.007) \\ 
-  & & \\ 
  Married & 0.482$^{***}$ & 1.619 \\ 
   & (0.185) \\ 
-  & & \\ 
  Black & $-$0.869$^{***}$ & 0.419 \\ 
   & (0.243) \\ 
-  & & \\ 
  Hispanic & $-$0.860$^{***}$ & 0.423 \\ 
   & (0.323) \\ 
-  & & \\ 
  Constant & 1.233$^{*}$ & 3.431 \\ 
   & (0.685) \\ 
-  & & \\ 
 \hline \\[-1.8ex] 
 Observations & 1,937 \\ 
 Log Likelihood & $-$462.546 \\ 
@@ -149,7 +136,7 @@ Standar Errors in parenthesis\\
   \caption{Predicted Probability of Loan Approval - \textbf{Logit}} 
   \label{} 
 \begin{tabular}{@{\extracolsep{5pt}}lccccc} 
-\\[-1.8ex]\hline 
+\\[-1.0ex]\hline 
 \hline \\[-1.8ex] 
 & \multicolumn{1}{c}{White} & \multicolumn{1}{c}{Black} & \multicolumn{1}{c}{Hispanic} \\ 
 \hline \\[-1.8ex] 
@@ -161,8 +148,9 @@ Does not meet credit guidelines, Single & 25.5\% & 12.5\% & 12.6\% \\
 \textit{Notes:} Other obligations set at sample mean of 32.37\% \\
 Loan to purchase price set at sample mean of 76.08\% \\
 \end{tabular} 
-\end{table}
-
+\end{table}   
+    
+\newpage  
 Table 5 presents the parameter estimates for our Probit Model. The interpretation of the estimated coefficients in the Probit model are not as straightforward as with a linear or Logit regression. So, for the sake of this analysis we will just be examining the sign of the coefficients to determine if they align with the Logit model in Table 3.  We can observe that the “Meets credit guidelines” and “Married” coefficients are both positive while the “Other obligations” and “Loan to purchase price” coefficients are both negative. The signs align with our intuition and the results we observed using the Logit model in Table 3. For the variables of interest, “Black” and “Hispanic”, both coefficients are negative. Once again, the signs align with what we have previously observed in Table 3.  
 
 Table 6 presents the predicted probabilities for prototypical individuals estimated based on our Probit model. For the sake of comparison, the prototypical values for “Other obligations” and “Loan to purchase price” were set to their sample means of 32.37% and 76.08%. We can observe that married white individuals who meet the credit guidelines have a predicted probability of approval of 96.1%. Whereas married Black and Hispanic prototypical individuals who meet the credit guidelines have a predicted probability of approval of 90.4% and 90.5% respectively. The gap between White applicants and their Black or Hispanic counterparts is roughly 5.5 percentage points. The lowest predicted probability of approval is observed among individuals that are single and do not meet the credit guidelines. The predicted probability of approval for these individuals is 25.8% for White applicants compared to 13.5% and 13.7% for Black and Hispanic applicants respectively. The results for the predicted probabilities based on the Probit model align with what we observed with the Logit model.
@@ -180,25 +168,18 @@ Race & \multicolumn{1}{c}{\textit{Dependent variable:}} \\
 \hline \\[-1.8ex] 
   Meets credit guidelines & 2.169$^{***}$ \\ 
   & (0.123) \\ 
-  & \\
  Other obligations (\% of income) & $-$0.016$^{***}$ \\ 
   & (0.005) \\ 
-  & \\ 
  Loan to purchase price (\%) & $-$0.007$^{**}$ \\ 
   & (0.003) \\ 
-  & \\ 
  Married & 0.239$^{***}$ \\ 
   & (0.092) \\ 
-  & \\ 
  Black & $-$0.450$^{***}$ \\ 
   & (0.128) \\ 
-  & \\ 
  Hispanic & $-$0.444$^{***}$ \\ 
   & (0.169) \\ 
-  & \\ 
  Constant & 0.435 \\ 
   & (0.337) \\ 
-  & \\ 
 \hline \\[-1.8ex] 
 Observations & 1,937 \\ 
 Log Likelihood & $-$462.491 \\ 
