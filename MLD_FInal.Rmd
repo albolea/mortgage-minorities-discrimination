@@ -87,6 +87,12 @@ __Modeling Approach__
 
 Since the mortgage decisions are only limited to “Approved” or “Denied”, which is “1” or “0” when translating into mathematical language, we chose to construct two multiple regression analyses using Probit and Logit Models. The parameters of the model were estimated using the maximal likelihood estimation method. To address our research question of whether mortgage lending institutions discriminate against minorities when making lending decisions, the variables of the most interest were included as the categorical variables of “Black” and “Hispanic” with “White” as the reference category. The other factors influencing mortgage lending decisions were “Meet credit guideline”, “Other obligations”, “Loan to purchase price”, and “Marriage”. Marital status was included because most married couples have two sources of income which can mitigate the default risk and indirectly lead to a higher probability of loan approval. Although gender could affect lending decisions, we excluded gender in this study because the sample size of female applicants was very small. Especially for female Hispanic applicants, the applications from this group only accounts for 1% of all applications. 
 
+\centerline{__Probit Model__}
+
+![](Model1.png)
+
+\centerline{__Logit Model__}
+![](Model2.png)
 
 __Empirical Results__
 
