@@ -1,0 +1,228 @@
+---
+title: "Financing the American Dream:"
+author: "Mark Russeff, Renato Albolea, Shuai Ma"
+subtitle: Examining Racial Inequality and The Mortgage Lending Industry  
+output:
+  pdf_document: default
+  word_document: default
+  html_document:
+    df_print: paged
+---
+&nbsp;
+&nbsp;
+\linespread{1.5}
+\large
+
+__Introduction__
+
+Home ownership has long been an important part of the American dream. Owning a home provides security, financial stability and it fosters a deeper connection to the community. Homeownership has shown to generate numerous positive effects including lower crime rates, increased civic engagement\footnote{DiPasquale, Denise, and Edward L. Glaeser. "Incentives and social capital: Are homeowners better citizens?." Journal of urban Economics 45.2 (1999): 354-384.} and higher childhood educational attainment\footnote{Aaronson, Daniel. "A Note on the Benefits of Homeownership." Journal of Urban Economics 47.3 (2000): 356-369.}. Nonetheless, for many this integral part of the American dream is still out of reach. This is especially true for low income individuals and minorities. In fact, minorities have faced a long history of lending discrimination and limited access to credit. That was why, in 1976, congress enacted the Home Mortgage Disclosure Act (HMDA) in order to monitor minority and low-income individual’s access to the mortgage market. The HMDA required that all financial institutions publicly disclose the data involved in mortgage lending decisions. Although the HMDA was an important piece of legislation it did fail to report several important decision factors such as loan-to-value and credit history. The HMDA data showed evidence of racial discrimination resulting in significantly higher denial rates for minorities than for whites. Lending institutions argued that that this data was not sufficient evidence for discrimination because it lacked many important financial factors. In 1990, responding to criticism of the HMDA data, the Federal Reserve Board of Boston requested that lending institutions provide additional information related to the mortgage lending process. The data provided by these lending institutions now contained additional information about the borrower’s credit history as well as the loan to value ratio for their loan. 
+
+According to the 1990 housing census\footnote{U.S. Census Bureau, "Historical Census of Housing
+Ownership", 1990, https://www.census.gov/hhes/www/housing/census/historic/ownrate.html} 64.2% of Americans owned a home, while only 43.4% of African Americans and 42.4% of Hispanics were homeowners. The divide is even more significant in Massachusetts where the total homeownership rate is 59.3%, while only 26.4% for African Americans and 18.7% for Hispanics. It is imperative that these home ownership disparities be examined so that policy makers and financial institutions can work together to bridge the gap. In most cases, access to credit is the most important factor influencing whether an individual is capable of purchasing a home. Given this disparity, we aim to answer the question: Do mortgage lending institutions discriminate against minorities when making lending decisions?
+
+ In order to address our research question, we estimated two different models in order to determine whether the probability of mortgage approval differs among racial groups. Based on our estimated Logit model, we found that White applicants face roughly 2.4 times greater odds of approval than their Black and Hispanic counterparts. In addition, we were able to construct a set of 12 prototypical individuals and calculate their predicted probability of approval based on our Probit model. These predicted probabilities showed that White individuals had a higher predicted probability of loan approval than their Black and Hispanic counterparts for every demographic combination. The results of our analysis suggest that there is racial discrimination among the mortgage lending decisions in our sample.
+
+
+__Data__
+
+  
+&nbsp;
+&nbsp;
+
+
+\begin{table}[!htbp] \centering 
+  \caption{Descriptive statistics - \textbf{All}} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+Statistic & \multicolumn{1}{c}{Mean} & \multicolumn{1}{c}{St. Dev.} & \multicolumn{1}{c}{Min} & \multicolumn{1}{c}{Max} \\ 
+\hline \\[-1.8ex] 
+Approved & 0.88 & 0.33 & 0 & 1 \\ 
+Meets credit guidelines & 0.91 & 0.28 & 0 & 1 \\ 
+Other obligations (\% of income) & 32.37 & 8.25 & 0 & 95 \\ 
+Loan to purchase price (\%) & 76.08 & 16.76 & 2 & 100 \\ 
+Married & 0.66 & 0.47 & 0 & 1 \\ 
+\hline \\[-1.8ex] 
+\end{tabular} 
+\end{table}
+```{r}
+
+```
+
+\begin{table}[!htbp] \centering 
+  \caption{Descriptive statistics - \textbf{Race}} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+Statistic & \multicolumn{1}{c}{Mean} & \multicolumn{1}{c}{St. Dev.} & \multicolumn{1}{c}{Min} & \multicolumn{1}{c}{Max} \\ 
+\hline \\[-1.8ex] 
+\textbf{White} (n = 1641)\\
+\hspace{2ex}Approved & 0.91 & 0.29 & 0 & 1 \\ 
+\hspace{2ex}Meets credit guidelines & 0.94 & 0.24 & 0 & 1 \\ 
+\hspace{2ex}Other obligations (\% of income) & 31.99 & 8.18 & 0 & 95 \\ 
+\hspace{2ex}Loan to purchase price (\%) & 74.78 & 17.17 & 2 & 100 \\ 
+\hspace{2ex}Married & 0.66 & 0.47 & 0 & 1 \\ 
+\textbf{Black} (n = 192)\\
+\hspace{2ex}Approved & 0.67 & 0.47 & 0 & 1 \\ 
+\hspace{2ex}Meets credit guidelines & 0.72 & 0.45 & 0 & 1 \\ 
+\hspace{2ex}Other obligations (\% of income) & 35.03 & 8.13 & 5.60 & 63 \\ 
+\hspace{2ex}Loan to purchase price (\%) & 82.89 & 12.63 & 28.99 & 100 \\ 
+\hspace{2ex}Married & 0.61 & 0.49 & 0 & 1 \\ 
+\textbf{Hispanic} (n = 104)\\
+\hspace{2ex}Approved & 0.78 & 0.42 & 0 & 1 \\ 
+\hspace{2ex}Meets credit guidelines & 0.87 & 0.34 & 0 & 1 \\ 
+\hspace{2ex}Other obligations (\% of income) & 33.32 & 8.56 & 14.60 & 62 \\ 
+\hspace{2ex}Loan to purchase price (\%) & 83.91 & 10.92 & 40 & 100 \\ 
+\hspace{2ex}Married & 0.71 & 0.46 & 0 & 1 \\ 
+\hline \\[-1.8ex] 
+\end{tabular} 
+\end{table}
+
+ 
+__Empirical Results__
+
+Table 3 presents the parameter estimates for our Logit Model and the corresponding odds ratios. Based on these estimates we can observe that the coefficients of “Meets credit guidelines” and “Married” are both positive. The coefficient of 3.766 for “Meets credit guidelines” is statistically significant at the 1% level and corresponds to an odds ratio of 43.227. This indicates that controlling for all other variables an applicant who meets the credit guidelines faces roughly 43.227 better odds of approval than someone who does not meet the guidelines. This demonstrates that meeting the credit guidelines is the most important factor for improving your odds of approval in our model. The coefficient of 0.482 for “Married” is statistically significant at the 1% level and corresponds to an odds ratio of 1.619. This indicates that controlling for all other variables an applicant who is married faces roughly 1.619 greater odds of approval than someone who is single. This intuitively makes sense; a married individual will likely be more financial stable and would likely be two incomes contributing to the paying of the mortgage. Based on the estimate we can also observe that the coefficients of “Loan to purchase price” and “Other obligations” are both negative. The coefficient of -0.016 for “Loan to purchase price” is statistically significant at the 5% level and corresponds to an odds ratio of 0.984. This indicates that controlling for all other variables an applicant with a 1 percentage point higher loan to purchase price ratio will face roughly 1.6% lower odds of approval than a similar applicant with a loan to purchase price 1 percentage point lower. Loans with a high loan to purchase price indicate a lower down payment and a higher risk of default for the lender, so it makes sense that as this percentage gets higher the odds of approval are diminished.  For the variable “Other obligations” we have a coefficient of -0.034 which is statistically significant at the 1% level and corresponds to an odds ratio of 0.967. This indicates that controlling for all other variables an applicant with other obligations 1 percentage point higher than another applicant will face roughly 3.3% lower odds of approval. Similar to the case with high loan to purchase ratios a high percentage of other obligations indicate a borrower who may a higher risk for the lender.  
+
+When we examine the parameter estimates for the race variables, we can observe that both “Black” and “Hispanic” are negative. The coefficient of -0.869 for “Black” corresponds to an odds ratio of 0.419 and the coefficient of -0.860 for “Hispanic” corresponds to an odds ratio of 0.423. The odds ratios indicate that a White applicant faces roughly 2.39 greater odds of approval than a Black applicant and roughly 2.36 greater odds of approval than a Hispanic applicant. This finding seems to indicated that there is evidence of racial discrimination in the lending market. Additionally, we can observe that both Blacks and Hispanics have similar odds of approval in relation to Whites, suggesting that that the racial discrimination is not specific to one minority group.
+
+
+\begin{table}[!htbp] \centering 
+  \caption{Estimated Logit Model} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lcc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{2}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-3} 
+\\[-1.8ex] & \multicolumn{2}{c}{Approved Loan} \\ 
+\\[-1.8ex] & Estimate & Odds Ratio\\ 
+\hline \\[-1.8ex] 
+ Meets credit guidelines & 3.766$^{***}$ & 43.227 \\ 
+  & (0.221) \\ 
+  & & \\ 
+ Other obligations (\% of income) & $-$0.034$^{***}$ & 0.967 \\ 
+  & (0.011) \\ 
+  & & \\ 
+ Loan to purchase price (\%) & $-$0.016$^{**}$ & 0.984 \\ 
+  & (0.007) \\ 
+  & & \\ 
+ Married & 0.482$^{***}$ & 1.619 \\ 
+  & (0.185) \\ 
+  & & \\ 
+ Black & $-$0.869$^{***}$ & 0.419 \\ 
+  & (0.243) \\ 
+  & & \\ 
+ Hispanic & $-$0.860$^{***}$ & 0.423 \\ 
+  & (0.323) \\ 
+  & & \\ 
+ Constant & 1.233$^{*}$ & 3.431 \\ 
+  & (0.685) \\ 
+  & & \\ 
+\hline \\[-1.8ex] 
+Observations & 1,937 \\ 
+Log Likelihood & $-$462.546 \\ 
+Akaike Inf. Crit. & 939.091 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Notes:} & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\textit{Reference category:} white\\
+Standar Errors in parenthesis\\ 
+\end{tabular} 
+\end{table} 
+
+
+Table 4 presents the predicted probabilities for 12 prototypical individuals based on our Logit model. For the sake of comparison, the prototypical values for “Other obligations” and “Loan to purchase price” were set to their sample means of 32.37% and 76.08%. When we examine the predicted probability of prototypical individuals across race we can see that there is evidence of a racial disparity. For prototypical individuals who meet the credit guidelines we can observe a roughly 5 percentage point difference between the predicted probability of approval for married Whites over married Blacks and Hispanics. However, the largest difference is for prototypical individuals who are married and do not meet the credit guidelines. For a white prototype we observe a predicted probability of 35.6% but for a Black prototype we observe a predicted probability of only 18.8%--a roughly 16.8 percentage point difference. This result demonstrates a very strong case for racial discrimination within our sample.
+
+
+\begin{table}[!htbp] \centering 
+  \caption{Predicted Probability of Loan Approval - \textbf{Logit}} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+& \multicolumn{1}{c}{White} & \multicolumn{1}{c}{Black} & \multicolumn{1}{c}{Hispanic} \\ 
+\hline \\[-1.8ex] 
+Meets credit guidelines, Married & 96.0\% & 90.9\% & 91.0\% \\
+Meets credit guidelines, Single & 93.7\% & 86.1\% & 86.2\% \\ 
+Does not meet credit guidelines, Married & 35.6\% & 18.8\% & 19.0\% \\ 
+Does not meet credit guidelines, Single & 25.5\% & 12.5\% & 12.6\% \\ 
+\hline \\[-1.8ex] 
+\textit{Notes:} Other obligations set at sample mean of 32.37\% \\
+Loan to purchase price set at sample mean of 76.08\% \\
+\end{tabular} 
+\end{table}
+```{r}
+
+```
+
+\begin{table}[!htbp] \centering 
+  \caption{Estimated Probit Model} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+Race & \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-2} 
+\\[-1.8ex] & Approved Loan \\ 
+\hline \\[-1.8ex] 
+  Meets credit guidelines & 2.169$^{***}$ \\ 
+  & (0.123) \\ 
+  & \\
+ Other obligations (\% of income) & $-$0.016$^{***}$ \\ 
+  & (0.005) \\ 
+  & \\ 
+ Loan to purchase price (\%) & $-$0.007$^{**}$ \\ 
+  & (0.003) \\ 
+  & \\ 
+ Married & 0.239$^{***}$ \\ 
+  & (0.092) \\ 
+  & \\ 
+ Black & $-$0.450$^{***}$ \\ 
+  & (0.128) \\ 
+  & \\ 
+ Hispanic & $-$0.444$^{***}$ \\ 
+  & (0.169) \\ 
+  & \\ 
+ Constant & 0.435 \\ 
+  & (0.337) \\ 
+  & \\ 
+\hline \\[-1.8ex] 
+Observations & 1,937 \\ 
+Log Likelihood & $-$462.491 \\ 
+Akaike Inf. Crit. & 938.982 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Notes:} & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\textit{Reference category:} white\\
+Standar Errors in parenthesis\\
+\end{tabular} 
+\end{table} 
+```{r}
+
+```
+\begin{table}[!htbp] \centering 
+  \caption{Predicted Probability of Loan Approval - \textbf{Probit}} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+& \multicolumn{1}{c}{White} & \multicolumn{1}{c}{Black} & \multicolumn{1}{c}{Hispanic} \\ 
+\hline \\[-1.8ex] 
+Meets credit guidelines, Married & 96.1\% & 90.4\% & 90.5\% \\
+Meets credit guidelines, Single & 93.6\% & 85.7\% & 85.9\% \\ 
+Does not meet credit guidelines, Married & 34.0\% & 19.4\% & 19.6\% \\ 
+Does not meet credit guidelines, Single & 25.8\% & 13.5\% & 13.7\% \\ 
+\hline \\[-1.8ex] 
+\textit{Notes:} Other obligations set at sample mean of 32.37\% \\
+Loan to purchase price set at sample mean of 76.08\% \\
+\end{tabular} 
+\end{table}
+
+__Conclusion__
+
+In conclusion, both of our models have demonstrated that there is a relationship between race and the probability of mortgage loan approval. Controlling for the highly influential variables of “Meets credit guidelines”, “Other obligations” and “Loan to purchase price”, our models find that white applicants are more than twice as likely to be approved for a loan than a minority holding all other variables constant. In addition, a prototypical white borrower has a predicted probability of approval between 5-17 percentage points higher than that of a prototypical minority. There is very strong evidence that there is some degree of racial discrimination in the mortgage loan decisions observed in our data. 
+While the findings of this study may be compelling, it is worth acknowledging that there are some limitations to our analysis. First, although we were able to find a significant relationship between race and mortgage loan approval rates in the city of Boston, it does not mean that this same relationship holds in other locations. Generalizing these results to a national population would violate the Gauss Markov assumption of random sampling because our sample was very specifically drawn from the city of Boston. This would result in a national model that was biased and not a valid estimator. Second, there may be other variables that affect mortgage loan approval that were not included in the model. These variables could be things like age, profession, or length of credit history. By including these variables in future models, it could increase their precision and better satisfy the zero conditional mean assumption, therefore reducing the potential for omitted variable bias. For future studies a larger national sample size may be required as well as additional variables in order to better examine the relationship between race and mortgage loan approval rate.
+For many Americans the dream of homeownership has been elusive, in large part, due to a lack of access to credit. If homeownership is going to be an equal opportunity for all, then first we must eliminate racial discrimination from the mortgage lending market. Our analysis has shown that in 1990 there was still significant racial discrimination occurring in mortgage lending. Moving forward more thorough studies will be required in order to access the current state of the mortgage market and make adjustments when necessary to increase equality. The final goal will be an American Dream that is equally accessible to all Americans.
+
