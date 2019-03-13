@@ -87,12 +87,14 @@ __Modeling Approach__
 
 Since the mortgage decisions are only limited to “Approved” or “Denied”, which is “1” or “0” when translating into mathematical language, we chose to construct two multiple regression analyses using Probit and Logit Models. The parameters of the model were estimated using the maximal likelihood estimation method. To address our research question of whether mortgage lending institutions discriminate against minorities when making lending decisions, the variables of the most interest were included as the categorical variables of “Black” and “Hispanic” with “White” as the reference category. The other factors influencing mortgage lending decisions were “Meet credit guideline”, “Other obligations”, “Loan to purchase price”, and “Marriage”. Marital status was included because most married couples have two sources of income which can mitigate the default risk and indirectly lead to a higher probability of loan approval. Although gender could affect lending decisions, we excluded gender in this study because the sample size of female applicants was very small. Especially for female Hispanic applicants, the applications from this group only accounts for 1% of all applications. 
 
-\centerline{__Probit Model__}
 
-![](Model1.png)
+ __Probit Model__ 
 
-\centerline{__Logit Model__}
-![](Model2.png)
+$P(y=1|x) = G(\beta_{0} + \beta_{1}MeetCreditGuidelines + \beta_{2}OtherObligations + \beta_{3}LoanToPurchasePrice + \beta_{4}Married + \beta_{5}Black + \beta_{6}Hispanic + \mu )$
+
+ __Logit Model__   
+ 
+$ln(\frac{P}{1-P}) = \beta_{0} + \beta_{1}MeetCreditGuidelines + \beta_{2}OtherObligations + \beta_{3}LoanToPurchasePrice + \beta_{4}Married + \beta_{5}Black + \beta_{6}Hispanic + \mu$
 
 __Empirical Results__
 
@@ -222,3 +224,7 @@ Table 5 presents the parameter estimates for our Probit Model. The interpretatio
 
 Table 6 presents the predicted probabilities for prototypical individuals estimated based on our Probit model. For the sake of comparison, the prototypical values for “Other obligations” and “Loan to purchase price” were set to their sample means of 32.37% and 76.08%. We can observe that married white individuals who meet the credit guidelines have a predicted probability of approval of 96.1%. Whereas married Black and Hispanic prototypical individuals who meet the credit guidelines have a predicted probability of approval of 90.4% and 90.5% respectively. The gap between White applicants and their Black or Hispanic counterparts is roughly 5.5 percentage points. The lowest predicted probability of approval is observed among individuals that are single and do not meet the credit guidelines. The predicted probability of approval for these individuals is 25.8% for White applicants compared to 13.5% and 13.7% for Black and Hispanic applicants respectively. The results for the predicted probabilities based on the Probit model align with what we observed with the Logit model.
 
+
+__Contributions__  
+
+All of us made similar contributions to the project across many areas and worked together on all elements. However, we each individually led for certain sections: Renato for programming/model specification, Shuai for EDA and Mark for final writing.
