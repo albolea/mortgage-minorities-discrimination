@@ -77,8 +77,11 @@ Statistic & \multicolumn{1}{c}{Mean} & \multicolumn{1}{c}{St. Dev.} & \multicolu
 \hspace{2ex}Married & 0.71 & 0.46 & 0 & 1 \\ 
 \hline \\[-1.8ex] 
 \end{tabular} 
-\end{table}
+\end{table}    
 
+    
+    
+\newpage      
  
 __Empirical Results__
 
